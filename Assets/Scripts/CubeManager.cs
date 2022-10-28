@@ -40,7 +40,17 @@ public class CubeManager : MonoBehaviour
     private void Start()
     {
         guiStyle.fontSize = 50; //change the font size
-        screenhalf = Screen.width / 2;
+
+        //Calculate Screen Width's half
+        screenhalf = Screen.width/2;
+
+        //Subscribe to Event Brodcasts
+        Globals.OnSwipe += OnSwipe;
+    }
+
+    private void OnDestroy()
+    {
+        Globals.OnSwipe -= OnSwipe;
     }
 
     private GUIStyle guiStyle = new GUIStyle();
@@ -49,7 +59,7 @@ public class CubeManager : MonoBehaviour
     {
         GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
         GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
-        GUILayout.Label($"Swipe Dir = {Globals.currentSwipeDirection}", guiStyle);
+        //GUILayout.Label($"Swipe Dir = {Globals.currentSwipeDirection}", guiStyle);
     }
 
     void GrabSelectedCubeUnit() {
@@ -60,7 +70,9 @@ public class CubeManager : MonoBehaviour
             Debug.LogError(hit.transform.name);
             selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
             mousePositionXOnInput = Input.mousePosition.x;
-
+        }
+        else {
+            selectedCubeUnit = null;
         }
     }
 
@@ -69,7 +81,7 @@ public class CubeManager : MonoBehaviour
         if (rotating)
             return;
 
-        if (Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonDown(0)) {
             GrabSelectedCubeUnit();
         }
 
@@ -97,7 +109,7 @@ public class CubeManager : MonoBehaviour
     {
         //GrabSelectedCubeUnit();
 
-           rotating = true;
+        rotating = true;
 
         detectorPlanes.position = selectedCubeUnit.transform.position;
 
@@ -121,11 +133,40 @@ public class CubeManager : MonoBehaviour
 
         selectedCubeUnit.horizontalPlane.Clear();
 
-
-        
-
         //Rotate the Rotator
         Rotate(RotationDirection.left);
+    }
+
+    IEnumerator RotateRight()
+    {
+        //GrabSelectedCubeUnit();
+
+        rotating = true;
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
+        //Enable Horizontal Plane for selected Cube unit
+        selectedCubeUnit.ToggleHorizontalPlane(true);
+        selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        selectedCubeUnit.ToggleVerticalRightPlane(false);
+
+        yield return new WaitForSeconds(.1f);
+
+        detectedCubes.Clear();
+        //Grab all Horizontal Cube units
+        detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
+
+        //Set Rotator as their parent
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(rotator, true);
+            yield return null;
+        }
+
+        selectedCubeUnit.horizontalPlane.Clear();
+
+        //Rotate the Rotator
+        Rotate(RotationDirection.right);
     }
 
     IEnumerator RotateUpLeft()
@@ -193,15 +234,87 @@ public class CubeManager : MonoBehaviour
         Rotate(RotationDirection.upRight);
     }
 
+    IEnumerator RotateDownRight()
+    {
+        //GrabSelectedCubeUnit();
+        rotating = true;
+
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
+        //Enable Horizontal Plane for selected Cube unit
+        selectedCubeUnit.ToggleHorizontalPlane(false);
+        selectedCubeUnit.ToggleVerticalLeftPlane(true);
+        selectedCubeUnit.ToggleVerticalRightPlane(false);
+
+        yield return new WaitForSeconds(.1f);
+
+        detectedCubes.Clear();
+
+        //Grab all Horizontal Cube units
+        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
+
+        //Set Rotator as their parent
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(rotator, true);
+            yield return null;
+        }
+
+        selectedCubeUnit.verticalPlaneLeft.Clear();
+
+        //Rotate the Rotator
+        Rotate(RotationDirection.downRight);
+    }
+
+    IEnumerator RotateDownLeft()
+    {
+        //GrabSelectedCubeUnit();
+        rotating = true;
+
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
+        //Enable Horizontal Plane for selected Cube unit
+        selectedCubeUnit.ToggleHorizontalPlane(false);
+        selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        selectedCubeUnit.ToggleVerticalRightPlane(true);
+
+        yield return new WaitForSeconds(.1f);
+
+        detectedCubes.Clear();
+
+        //Grab all Horizontal Cube units
+        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
+
+        //Set Rotator as their parent
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(rotator, true);
+            yield return null;
+        }
+
+        selectedCubeUnit.verticalPlaneRight.Clear();
+
+        //Rotate the Rotator
+        Rotate(RotationDirection.downLeft);
+    }
+
 
     public void Rotate(RotationDirection direction)
     {
         if (direction == RotationDirection.left)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
+        if (direction == RotationDirection.right)
+            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
         if (direction == RotationDirection.upLeft)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
+        if (direction == RotationDirection.downLeft)
+            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
         if (direction == RotationDirection.upRight)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+        if (direction == RotationDirection.downRight)
+            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
     }
 
 
@@ -232,6 +345,52 @@ public class CubeManager : MonoBehaviour
         rotator.rotation = Quaternion.Euler(0,0,0);
         rotating = false;
         Debug.LogError("Finish");
+    }
+
+    #endregion
+
+    #region Callbacks
+    void OnSwipe(Globals.SwipeDirection swipeDirection) {
+        //avoid multiple inputs
+        if (rotating)
+            return;
+
+        if (selectedCubeUnit == null)
+        {
+            //Rotate Camera as per Swipe
+            return;
+        }
+
+        //Rotate Cube as per Swipe
+        switch (swipeDirection)
+        {
+            case Globals.SwipeDirection.up:
+                if(isCubePlacedInLeftScreen())
+                    StartCoroutine(RotateUpRight());
+                else
+                    StartCoroutine(RotateUpLeft());
+                break;
+
+            //case Globals.SwipeDirection.down:
+            //    if (isCubePlacedInLeftScreen())
+            //        StartCoroutine(RotateDownLeft());
+            //    else
+            //        StartCoroutine(RotateDownRight());
+                //break;
+            case Globals.SwipeDirection.left:
+                StartCoroutine(RotateLeft());
+                break;
+            case Globals.SwipeDirection.right:
+                StartCoroutine(RotateRight());
+                break;
+        }
+    }
+
+    bool isCubePlacedInLeftScreen() {
+        if (mousePositionXOnInput > screenhalf)
+            return false;
+        else
+            return true;
     }
     #endregion
 }

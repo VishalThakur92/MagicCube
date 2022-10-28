@@ -93,8 +93,9 @@ public class SwipeManager : MonoBehaviour
     //////////////////////////////////CALLBACK FUNCTIONS/////////////////////////////
     void OnSwipe(Globals.SwipeDirection swipeDirection)
     {
-        Debug.LogError($"Swipe {swipeDirection}");
-        Globals.currentSwipeDirection = swipeDirection;
+
+        Globals.OnSwipe.Invoke(swipeDirection);
+        //Debug.LogError($"Swipe {swipeDirection}");
     }
 }
 

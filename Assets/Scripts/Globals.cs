@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,5 +13,9 @@ public static class Globals
         right
     }
 
-    public static SwipeDirection currentSwipeDirection;
+
+
+
+
+    public static Action<SwipeDirection> OnSwipe;
 }
