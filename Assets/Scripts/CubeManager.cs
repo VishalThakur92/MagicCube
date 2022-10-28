@@ -48,7 +48,8 @@ public class CubeManager : MonoBehaviour
     private void OnGUI()
     {
         GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
-        GUILayout.Label($"Screen Width = {Screen.width/2}", guiStyle);
+        GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
+        GUILayout.Label($"Swipe Dir = {Globals.currentSwipeDirection}", guiStyle);
     }
 
     void GrabSelectedCubeUnit() {
