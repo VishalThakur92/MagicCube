@@ -4,11 +4,20 @@ using UnityEngine;
 
 public class CubeManager : MonoBehaviour
 {
+    public enum RotationDirection {
+        left,
+        right,
+        upLeft,
+        downLeft,
+        upRight,
+        downRight
+    }
+
     [SerializeField]
     CubeUnit selectedCubeUnit;
 
     [SerializeField]
-    Transform rotator, rubikCube;
+    Transform rotator, rubikCube, detectorPlanes;
 
     [SerializeField]
     List<GameObject> detectedCubes = new List<GameObject>();
@@ -50,8 +59,8 @@ public class CubeManager : MonoBehaviour
         //if (Input.GetKeyUp(KeyCode.D))
         //    Rotate(Vector3.right);
 
-        //if (Input.GetKeyUp(KeyCode.W))
-        //    StartCoroutine(RotateUp());
+        if (Input.GetKeyUp(KeyCode.W))
+            StartCoroutine(RotateUpLeft());
 
         //if (Input.GetKeyUp(KeyCode.S))
         //    Rotate(Vector3.down);
@@ -61,10 +70,15 @@ public class CubeManager : MonoBehaviour
 
     IEnumerator RotateLeft()
     {
+
         rotating = true;
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
         //Enable Horizontal Plane for selected Cube unit
         selectedCubeUnit.ToggleHorizontalPlane(true);
-        selectedCubeUnit.ToggleVerticalPlane(false);
+        selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        selectedCubeUnit.ToggleVerticalRightPlane(false);
 
         yield return new WaitForSeconds(.1f);
 
@@ -79,21 +93,42 @@ public class CubeManager : MonoBehaviour
         }
 
 
-        //Rotate the Rotator to left
-        Rotate(Vector3.left);
+        //Rotate the Rotator
+        Rotate(RotationDirection.left);
+    }
+
+    IEnumerator RotateUpLeft()
+    {
+        rotating = true;
+        //Enable Horizontal Plane for selected Cube unit
+        selectedCubeUnit.ToggleHorizontalPlane(false);
+        selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        selectedCubeUnit.ToggleVerticalRightPlane(true);
+
+        yield return new WaitForSeconds(.1f);
+
+        //Grab all Horizontal Cube units
+        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
+
+        //Set Rotator as their parent
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(rotator, true);
+            yield return null;
+        }
+
+
+        //Rotate the Rotator
+        Rotate(RotationDirection.upLeft);
     }
 
 
-    public void Rotate(Vector3 direction)
+    public void Rotate(RotationDirection direction)
     {
-        if (direction == Vector3.left)
+        if (direction == RotationDirection.left)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
-        else if (direction == Vector3.right)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
-        if (direction == Vector3.up)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
-        else if (direction == Vector3.down)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+        if (direction == RotationDirection.upLeft)
+            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(-rotationMulitplier,0 , 0)));
     }
 
 

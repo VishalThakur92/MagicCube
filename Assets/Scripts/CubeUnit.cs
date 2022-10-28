@@ -5,7 +5,7 @@ using UnityEngine;
 public class CubeUnit : MonoBehaviour
 {
     [SerializeField]
-    public CubePlane horizontalPlane,verticalPlane;
+    public CubePlane horizontalPlane, verticalPlaneLeft, verticalPlaneRight;
 
 
     public void ToggleHorizontalPlane(bool flag)
@@ -13,8 +13,12 @@ public class CubeUnit : MonoBehaviour
         horizontalPlane.gameObject.SetActive(flag);
     }
 
-    public void ToggleVerticalPlane(bool flag)
+    public void ToggleVerticalLeftPlane(bool flag)
     {
-        verticalPlane.gameObject.SetActive(flag);
+        verticalPlaneLeft.gameObject.SetActive(flag);
+    }
+    public void ToggleVerticalRightPlane(bool flag)
+    {
+        verticalPlaneRight.gameObject.SetActive(flag);
     }
 }
