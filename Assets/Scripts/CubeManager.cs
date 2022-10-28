@@ -82,6 +82,7 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForSeconds(.1f);
 
+        detectedCubes.Clear();
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
 
@@ -92,6 +93,7 @@ public class CubeManager : MonoBehaviour
             yield return null;
         }
 
+        selectedCubeUnit.horizontalPlane.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.left);
@@ -100,6 +102,10 @@ public class CubeManager : MonoBehaviour
     IEnumerator RotateUpLeft()
     {
         rotating = true;
+
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
         //Enable Horizontal Plane for selected Cube unit
         selectedCubeUnit.ToggleHorizontalPlane(false);
         selectedCubeUnit.ToggleVerticalLeftPlane(false);
@@ -107,6 +113,7 @@ public class CubeManager : MonoBehaviour
 
         yield return new WaitForSeconds(.1f);
 
+        detectedCubes.Clear();
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
 
@@ -117,6 +124,7 @@ public class CubeManager : MonoBehaviour
             yield return null;
         }
 
+        selectedCubeUnit.verticalPlaneRight.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.upLeft);
