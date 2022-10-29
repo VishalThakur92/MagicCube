@@ -7,10 +7,17 @@ public static class Globals
 {
 
     public enum SwipeDirection {
+        none,
+
         up,
         down,
         left,
-        right
+        right,
+
+        upLeft,
+        upRight,
+        downLeft,
+        downRight
     }
 
 

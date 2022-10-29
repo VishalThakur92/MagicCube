@@ -39,6 +39,8 @@ public class CubeManager : MonoBehaviour
     [SerializeField]
     bool isTopFaceSelected = false;
 
+
+    Globals.SwipeDirection swipeDirection = Globals.SwipeDirection.none;
     //int layer_mask;
     #region Methods
 
@@ -66,16 +68,25 @@ public class CubeManager : MonoBehaviour
     {
         GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
         GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
-        GUILayout.Label($"Swipe Dir = {latestSwipeDirection}", guiStyle);
+        GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
     }
-    void GrabSelectedCubeUnit() {
+
+
+    IEnumerator GrabSelectedCubeUnit() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100))
         {
+
+            Debug.LogError(hit.transform.name);
+            selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
+            mousePositionXOnInput = Input.mousePosition.x;
+
             DebugRaydirection = hit.normal;
 
             LayerMask ignoreLayers = 1<<3;
-            if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 1000f, ignoreLayers))
+
+            yield return new WaitForEndOfFrame();
+            if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 100f, ignoreLayers))
             {
                 Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
                 if (hit2.transform.gameObject.layer == 3)
@@ -85,11 +96,11 @@ public class CubeManager : MonoBehaviour
                 }
             }
             else
+            {
                 isTopFaceSelected = false;
+                Debug.LogError("Nothing");
+            }
 
-            //Debug.LogError(hit.transform.name);
-            selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
-            mousePositionXOnInput = Input.mousePosition.x;
         }
         else {
             selectedCubeUnit = null;
@@ -107,26 +118,49 @@ public class CubeManager : MonoBehaviour
             return;
 
         if (Input.GetMouseButtonDown(0)) {
-            GrabSelectedCubeUnit();
+            StartCoroutine(GrabSelectedCubeUnit());
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
             StartCoroutine(RotateDownLeft());
 
-        if (Input.GetKeyUp(KeyCode.D)) {
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.right);
+        }
 
-            if (isTopFaceSelected)
-                StartCoroutine(RotateUpRight());
-            else
-                StartCoroutine(RotateRight());
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.left);
         }
 
         if (Input.GetKeyUp(KeyCode.W))
         {
-            if (mousePositionXOnInput > screenhalf)
-                StartCoroutine(RotateUpLeft());
-            else
-                StartCoroutine(RotateUpRight());
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.up);
+        }
+        if (Input.GetKeyUp(KeyCode.S))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.down);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft);
+        }
+
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight);
+        }
+
+        if (Input.GetKeyUp(KeyCode.Z))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft);
+        }
+
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight);
         }
 
         //if (Input.GetKeyUp(KeyCode.S))
@@ -378,13 +412,15 @@ public class CubeManager : MonoBehaviour
         rotator.rotation = Quaternion.Euler(0,0,0);
         rotating = false;
         isTopFaceSelected = false;
+        selectedCubeUnit = null;
         Debug.LogError("Finish");
     }
 
     #endregion
 
     #region Callbacks
-    void OnSwipe(Globals.SwipeDirection swipeDirection) {
+    void OnSwipe(Globals.SwipeDirection direction) {
+        swipeDirection = direction;
         //avoid multiple inputs
         if (rotating)
             return;
@@ -412,13 +448,28 @@ public class CubeManager : MonoBehaviour
                     StartCoroutine(RotateDownRight());
                 break;
             case Globals.SwipeDirection.left:
-                StartCoroutine(RotateLeft());
+                if (isTopFaceSelected)
+                    StartCoroutine(RotateDownLeft());
+                else
+                    StartCoroutine(RotateLeft());
                 break;
             case Globals.SwipeDirection.right:
                 if (isTopFaceSelected)
                     StartCoroutine(RotateUpRight());
                 else
                     StartCoroutine(RotateRight());
+                break;
+            case Globals.SwipeDirection.upLeft:
+                StartCoroutine(RotateUpLeft());
+                break;
+            case Globals.SwipeDirection.downRight:
+                StartCoroutine(RotateDownRight());
+                break;
+            case Globals.SwipeDirection.upRight:
+                StartCoroutine(RotateUpRight());
+                break;
+            case Globals.SwipeDirection.downLeft:
+                StartCoroutine(RotateDownLeft());
                 break;
         }
 
