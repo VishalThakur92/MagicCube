@@ -20,7 +20,7 @@ public class CubeManager : MonoBehaviour
     Transform rotator, rubikCube, detectorPlanes;
 
     [SerializeField]
-    List<GameObject> detectedCubes = new List<GameObject>();
+    List<CubeUnit> detectedCubes = new List<CubeUnit>();
 
     [SerializeField]
     bool rotating = false;
@@ -35,6 +35,11 @@ public class CubeManager : MonoBehaviour
     [SerializeField]
     float mousePositionXOnInput , screenhalf;
 
+
+    [SerializeField]
+    bool isTopFaceSelected = false;
+
+    //int layer_mask;
     #region Methods
 
     private void Start()
@@ -46,6 +51,8 @@ public class CubeManager : MonoBehaviour
 
         //Subscribe to Event Brodcasts
         Globals.OnSwipe += OnSwipe;
+
+        //layer_mask = LayerMask.GetMask("TopFaceDetector");
     }
 
     private void OnDestroy()
@@ -54,20 +61,33 @@ public class CubeManager : MonoBehaviour
     }
 
     private GUIStyle guiStyle = new GUIStyle();
-
+    Globals.SwipeDirection latestSwipeDirection;
     private void OnGUI()
     {
         GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
         GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
-        //GUILayout.Label($"Swipe Dir = {Globals.currentSwipeDirection}", guiStyle);
+        GUILayout.Label($"Swipe Dir = {latestSwipeDirection}", guiStyle);
     }
-
     void GrabSelectedCubeUnit() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, 100))
+        if (Physics.Raycast(ray, out RaycastHit hit, 100))
         {
-            Debug.LogError(hit.transform.name);
+            DebugRaydirection = hit.normal;
+
+            LayerMask ignoreLayers = 1<<3;
+            if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 1000f, ignoreLayers))
+            {
+                Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
+                if (hit2.transform.gameObject.layer == 3)
+                {
+                    isTopFaceSelected = true;
+                    Debug.LogError("Top Face Seleced " + hit2.transform.name);
+                }
+            }
+            else
+                isTopFaceSelected = false;
+
+            //Debug.LogError(hit.transform.name);
             selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
             mousePositionXOnInput = Input.mousePosition.x;
         }
@@ -76,8 +96,13 @@ public class CubeManager : MonoBehaviour
         }
     }
 
+    Vector3 DebugRaydirection;
+
     public void Update()
     {
+        if(selectedCubeUnit)
+            Debug.DrawLine(selectedCubeUnit.transform.position, DebugRaydirection, Color.green);
+
         if (rotating)
             return;
 
@@ -85,11 +110,16 @@ public class CubeManager : MonoBehaviour
             GrabSelectedCubeUnit();
         }
 
-        if (Input.GetKeyUp(KeyCode.A))
-            StartCoroutine(RotateLeft());
+        if (Input.GetKeyUp(KeyCode.Space))
+            StartCoroutine(RotateDownLeft());
 
-        //if (Input.GetKeyUp(KeyCode.D))
-        //    Rotate(Vector3.right);
+        if (Input.GetKeyUp(KeyCode.D)) {
+
+            if (isTopFaceSelected)
+                StartCoroutine(RotateUpRight());
+            else
+                StartCoroutine(RotateRight());
+        }
 
         if (Input.GetKeyUp(KeyCode.W))
         {
@@ -244,39 +274,6 @@ public class CubeManager : MonoBehaviour
 
         //Enable Horizontal Plane for selected Cube unit
         selectedCubeUnit.ToggleHorizontalPlane(false);
-        selectedCubeUnit.ToggleVerticalLeftPlane(true);
-        selectedCubeUnit.ToggleVerticalRightPlane(false);
-
-        yield return new WaitForSeconds(.1f);
-
-        detectedCubes.Clear();
-
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
-        {
-            detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
-        }
-
-        selectedCubeUnit.verticalPlaneLeft.Clear();
-
-        //Rotate the Rotator
-        Rotate(RotationDirection.downRight);
-    }
-
-    IEnumerator RotateDownLeft()
-    {
-        //GrabSelectedCubeUnit();
-        rotating = true;
-
-
-        detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(false);
         selectedCubeUnit.ToggleVerticalLeftPlane(false);
         selectedCubeUnit.ToggleVerticalRightPlane(true);
 
@@ -297,6 +294,39 @@ public class CubeManager : MonoBehaviour
         selectedCubeUnit.verticalPlaneRight.Clear();
 
         //Rotate the Rotator
+        Rotate(RotationDirection.downRight);
+    }
+
+    IEnumerator RotateDownLeft()
+    {
+        //GrabSelectedCubeUnit();
+        rotating = true;
+
+
+        detectorPlanes.position = selectedCubeUnit.transform.position;
+
+        //Enable Horizontal Plane for selected Cube unit
+        selectedCubeUnit.ToggleHorizontalPlane(false);
+        selectedCubeUnit.ToggleVerticalLeftPlane(true);
+        selectedCubeUnit.ToggleVerticalRightPlane(false);
+
+        yield return new WaitForSeconds(.1f);
+
+        detectedCubes.Clear();
+
+        //Grab all Horizontal Cube units
+        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
+
+        //Set Rotator as their parent
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(rotator, true);
+            yield return null;
+        }
+
+        selectedCubeUnit.verticalPlaneLeft.Clear();
+
+        //Rotate the Rotator
         Rotate(RotationDirection.downLeft);
     }
 
@@ -305,16 +335,19 @@ public class CubeManager : MonoBehaviour
     {
         if (direction == RotationDirection.left)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
-        if (direction == RotationDirection.right)
+        else if (direction == RotationDirection.right)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
-        if (direction == RotationDirection.upLeft)
+
+        else if (direction == RotationDirection.upLeft)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
-        if (direction == RotationDirection.downLeft)
+        else if (direction == RotationDirection.downRight)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
-        if (direction == RotationDirection.upRight)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
-        if (direction == RotationDirection.downRight)
+
+        else if (direction == RotationDirection.downLeft)
             StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+        else if (direction == RotationDirection.upRight)
+            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+
     }
 
 
@@ -344,6 +377,7 @@ public class CubeManager : MonoBehaviour
         //Reset Rotator Rotation to zero
         rotator.rotation = Quaternion.Euler(0,0,0);
         rotating = false;
+        isTopFaceSelected = false;
         Debug.LogError("Finish");
     }
 
@@ -371,19 +405,24 @@ public class CubeManager : MonoBehaviour
                     StartCoroutine(RotateUpLeft());
                 break;
 
-            //case Globals.SwipeDirection.down:
-            //    if (isCubePlacedInLeftScreen())
-            //        StartCoroutine(RotateDownLeft());
-            //    else
-            //        StartCoroutine(RotateDownRight());
-                //break;
+            case Globals.SwipeDirection.down:
+                if (isCubePlacedInLeftScreen())
+                    StartCoroutine(RotateDownLeft());
+                else
+                    StartCoroutine(RotateDownRight());
+                break;
             case Globals.SwipeDirection.left:
                 StartCoroutine(RotateLeft());
                 break;
             case Globals.SwipeDirection.right:
-                StartCoroutine(RotateRight());
+                if (isTopFaceSelected)
+                    StartCoroutine(RotateUpRight());
+                else
+                    StartCoroutine(RotateRight());
                 break;
         }
+
+        latestSwipeDirection = swipeDirection;
     }
 
     bool isCubePlacedInLeftScreen() {
@@ -392,5 +431,24 @@ public class CubeManager : MonoBehaviour
         else
             return true;
     }
+
+    //bool isTopMostCube() {
+
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(transform.position, Vector3.left, out hit, 100))
+    //    {
+    //        Debug.LogError("Cube not at top, Obj at top = " + hit.transform.name);
+    //        return false;
+    //    }
+    //    else
+    //    {
+    //        Debug.LogError("Top Most Cube seleced");
+    //        return true;
+    //    }
+
+    //    //Raycast on top of the selected cube
+    //    //If hit returns another cube then return false
+    //    //If hit returns nothing cube then return true
+    //}
     #endregion
 }

@@ -6,12 +6,13 @@ public class CubePlane : MonoBehaviour
 {
 
     [SerializeField]
-    public List<GameObject> detectedCubes = new List<GameObject>();
+    public List<CubeUnit> detectedCubes = new List<CubeUnit>();
 
     private void OnTriggerEnter(Collider other)
     {
-        if(!detectedCubes.Contains(other.gameObject))
-            detectedCubes.Add(other.gameObject);
+        CubeUnit newCube = other.GetComponent<CubeUnit>();
+        if(newCube && !detectedCubes.Contains(newCube))
+            detectedCubes.Add(newCube);
     }
 
 
