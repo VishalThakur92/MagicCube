@@ -88,34 +88,38 @@ public class CubeManager : MonoBehaviour
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100))
         {
-
-            detectedCubes.Clear();
-            Debug.LogError(hit.transform.name);
             selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
-            detectorPlanes.position = selectedCubeUnit.transform.position;
-            yield return null;
-            selectedCubeUnit.ToggleAllPlanes(true);
-            mousePositionXOnInput = Input.mousePosition.x;
 
-
-            DebugRaydirection = hit.normal;
-
-            LayerMask ignoreLayers = 1<<3;
-
-            yield return new WaitForEndOfFrame();
-            if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 100f, ignoreLayers))
+            if (selectedCubeUnit != null)
             {
-                Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
-                if (hit2.transform.gameObject.layer == 3)
+
+                detectedCubes.Clear();
+                Debug.LogError(hit.transform.name);
+                detectorPlanes.position = selectedCubeUnit.transform.position;
+                yield return null;
+                selectedCubeUnit.ToggleAllPlanes(true);
+                mousePositionXOnInput = Input.mousePosition.x;
+
+
+                DebugRaydirection = hit.normal;
+
+                LayerMask ignoreLayers = 1 << 3;
+
+                yield return new WaitForEndOfFrame();
+                if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 100f, ignoreLayers))
                 {
-                    isTopFaceSelected = true;
-                    Debug.LogError("Top Face Seleced " + hit2.transform.name);
+                    Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
+                    if (hit2.transform.gameObject.layer == 3)
+                    {
+                        isTopFaceSelected = true;
+                        Debug.LogError("Top Face Seleced " + hit2.transform.name);
+                    }
                 }
-            }
-            else
-            {
-                isTopFaceSelected = false;
-                Debug.LogError("Nothing");
+                else
+                {
+                    isTopFaceSelected = false;
+                    Debug.LogError("Nothing");
+                }
             }
 
         }
@@ -344,7 +348,7 @@ public class CubeManager : MonoBehaviour
                 break;
             case Globals.SwipeDirection.right:
                 if (isTopFaceSelected)
-                    OnSwipeRotate(RotationDirection.downRight, selectedCubeUnit.verticalPlaneLeft);
+                    OnSwipeRotate(RotationDirection.upRight, selectedCubeUnit.verticalPlaneLeft);
                 else
                     OnSwipeRotate(RotationDirection.right, selectedCubeUnit.horizontalPlane);
                 break;
