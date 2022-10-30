@@ -16,9 +16,9 @@ public class CubePlane : MonoBehaviour
     }
 
 
+
     public void Clear() {
         detectedCubes.Clear();
-        gameObject.SetActive(false);
     }
 
 }

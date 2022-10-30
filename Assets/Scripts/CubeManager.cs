@@ -77,9 +77,14 @@ public class CubeManager : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hit, 100))
         {
 
+            detectedCubes.Clear();
             Debug.LogError(hit.transform.name);
             selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
+            detectorPlanes.position = selectedCubeUnit.transform.position;
+            yield return null;
+            selectedCubeUnit.ToggleAllPlanes(true);
             mousePositionXOnInput = Input.mousePosition.x;
+
 
             DebugRaydirection = hit.normal;
 
@@ -103,7 +108,7 @@ public class CubeManager : MonoBehaviour
 
         }
         else {
-            selectedCubeUnit = null;
+           // selectedCubeUnit = null;
         }
     }
 
@@ -117,8 +122,13 @@ public class CubeManager : MonoBehaviour
         if (rotating)
             return;
 
-        if (Input.GetMouseButtonDown(0)) {
+        if (Input.GetMouseButtonDown(0))
+        {
             StartCoroutine(GrabSelectedCubeUnit());
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            selectedCubeUnit?.ToggleAllPlanes(false);
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
@@ -175,16 +185,15 @@ public class CubeManager : MonoBehaviour
 
         rotating = true;
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(true);
-        selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        selectedCubeUnit.ToggleVerticalRightPlane(false);
+        //selectedCubeUnit.ToggleHorizontalPlane(true);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        //selectedCubeUnit.ToggleVerticalRightPlane(false);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
+        //detectedCubes.Clear();
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
 
@@ -192,10 +201,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
+            //yield return null;
         }
-
-        selectedCubeUnit.horizontalPlane.Clear();
+        yield return null;
+        //selectedCubeUnit.horizontalPlane.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.left);
@@ -207,16 +216,15 @@ public class CubeManager : MonoBehaviour
 
         rotating = true;
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
+        //detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(true);
-        selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        selectedCubeUnit.ToggleVerticalRightPlane(false);
+        //selectedCubeUnit.ToggleHorizontalPlane(true);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        //selectedCubeUnit.ToggleVerticalRightPlane(false);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
 
@@ -224,10 +232,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
         }
+        yield return null;
 
-        selectedCubeUnit.horizontalPlane.Clear();
+        //selectedCubeUnit.horizontalPlane.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.right);
@@ -239,16 +247,16 @@ public class CubeManager : MonoBehaviour
         rotating = true;
 
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
+        //detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(false);
-        selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        selectedCubeUnit.ToggleVerticalRightPlane(true);
+        //selectedCubeUnit.ToggleHorizontalPlane(false);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        //selectedCubeUnit.ToggleVerticalRightPlane(true);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
+        //detectedCubes.Clear();
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
 
@@ -256,10 +264,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
         }
+        yield return null;
 
-        selectedCubeUnit.verticalPlaneRight.Clear();
+        //selectedCubeUnit.verticalPlaneRight.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.upLeft);
@@ -271,16 +279,16 @@ public class CubeManager : MonoBehaviour
         rotating = true;
 
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
+        //detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(false);
-        selectedCubeUnit.ToggleVerticalLeftPlane(true);
-        selectedCubeUnit.ToggleVerticalRightPlane(false);
+        //selectedCubeUnit.ToggleHorizontalPlane(false);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(true);
+        //selectedCubeUnit.ToggleVerticalRightPlane(false);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
+        //detectedCubes.Clear();
 
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
@@ -289,10 +297,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
         }
+        yield return null;
 
-        selectedCubeUnit.verticalPlaneLeft.Clear();
+        //selectedCubeUnit.verticalPlaneLeft.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.upRight);
@@ -304,16 +312,16 @@ public class CubeManager : MonoBehaviour
         rotating = true;
 
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
+        //detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(false);
-        selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        selectedCubeUnit.ToggleVerticalRightPlane(true);
+        //selectedCubeUnit.ToggleHorizontalPlane(false);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
+        //selectedCubeUnit.ToggleVerticalRightPlane(true);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
+        //detectedCubes.Clear();
 
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
@@ -322,10 +330,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
         }
 
-        selectedCubeUnit.verticalPlaneRight.Clear();
+        yield return null;
+        //selectedCubeUnit.verticalPlaneRight.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.downRight);
@@ -337,16 +345,16 @@ public class CubeManager : MonoBehaviour
         rotating = true;
 
 
-        detectorPlanes.position = selectedCubeUnit.transform.position;
+        //detectorPlanes.position = selectedCubeUnit.transform.position;
 
         //Enable Horizontal Plane for selected Cube unit
-        selectedCubeUnit.ToggleHorizontalPlane(false);
-        selectedCubeUnit.ToggleVerticalLeftPlane(true);
-        selectedCubeUnit.ToggleVerticalRightPlane(false);
+        //selectedCubeUnit.ToggleHorizontalPlane(false);
+        //selectedCubeUnit.ToggleVerticalLeftPlane(true);
+        //selectedCubeUnit.ToggleVerticalRightPlane(false);
 
-        yield return new WaitForSeconds(.1f);
+        //yield return new WaitForSeconds(.1f);
 
-        detectedCubes.Clear();
+        //detectedCubes.Clear();
 
         //Grab all Horizontal Cube units
         detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
@@ -355,10 +363,10 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rotator, true);
-            yield return null;
         }
+        yield return null;
 
-        selectedCubeUnit.verticalPlaneLeft.Clear();
+        //selectedCubeUnit.verticalPlaneLeft.Clear();
 
         //Rotate the Rotator
         Rotate(RotationDirection.downLeft);
@@ -404,7 +412,7 @@ public class CubeManager : MonoBehaviour
         for (int i = 0; i < detectedCubes.Count; i++)
         {
             detectedCubes[i].transform.SetParent(rubikCube, true);
-            yield return null;
+            //yield return null;
         }
 
 
@@ -412,7 +420,11 @@ public class CubeManager : MonoBehaviour
         rotator.rotation = Quaternion.Euler(0,0,0);
         rotating = false;
         isTopFaceSelected = false;
+        selectedCubeUnit.ToggleAllPlanes(false);
+        selectedCubeUnit.ClearAllPlanesData();
         selectedCubeUnit = null;
+
+        detectedCubes.Clear();
         Debug.LogError("Finish");
     }
 

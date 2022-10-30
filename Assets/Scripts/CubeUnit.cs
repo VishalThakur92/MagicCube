@@ -21,4 +21,17 @@ public class CubeUnit : MonoBehaviour
     {
         verticalPlaneRight.gameObject.SetActive(flag);
     }
+
+    public void ToggleAllPlanes(bool flag)
+    {
+        horizontalPlane.gameObject.SetActive(flag);
+        verticalPlaneLeft.gameObject.SetActive(flag);
+        verticalPlaneRight.gameObject.SetActive(flag);
+    }
+
+    public void ClearAllPlanesData() {
+        horizontalPlane.Clear();
+        verticalPlaneLeft.Clear();
+        verticalPlaneRight.Clear();
+    }
 }
