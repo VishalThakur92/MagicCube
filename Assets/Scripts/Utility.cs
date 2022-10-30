@@ -12,7 +12,8 @@ public class Utility : MonoBehaviour
     [ContextMenu("Do")]
     public void Do() {
         for (int i = 0; i < list.Count; i++) {
-            list[i].name = "Cube " + (i + 1);
+            list[i].name = "Cube " + (i);
+            list[i].GetComponent<CubeUnit>().uniqueID = i;
         }
     }
 }
