@@ -77,10 +77,10 @@ public class CubeManager : MonoBehaviour
         //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
         //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
 
-        foreach (string value in recordedSteps)
-        {
-            GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
-        }
+        //foreach (string value in recordedSteps)
+        //{
+        //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+        //}
     }
 
 
