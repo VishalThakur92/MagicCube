@@ -194,7 +194,7 @@ public class CubeManager : MonoBehaviour
 
     }
 
-    void Undo() {
+    public void Undo() {
         if (rotating || recordedSteps.Count == 0)
             return;
 
@@ -380,6 +380,9 @@ public class CubeManager : MonoBehaviour
             if(i<cubes.Count-1)
                value += ".";
         }
+
+        if (string.IsNullOrEmpty(value))
+            return;
 
         //Record rotationDirection
         value += "_" + System.Enum.GetName(typeof(RotationDirection), direction);
