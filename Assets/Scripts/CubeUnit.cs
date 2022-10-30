@@ -5,6 +5,10 @@ using UnityEngine;
 public class CubeUnit : MonoBehaviour
 {
     [SerializeField]
+    public int uniqueID;
+
+
+    [SerializeField]
     public CubePlane horizontalPlane, verticalPlaneLeft, verticalPlaneRight;
 
 

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class CubeManager : MonoBehaviour
 {
+    [SerializeField]
+    List<CubeUnit> allCubes = new List<CubeUnit>();
+
     public enum RotationDirection {
         left,
         right,
@@ -12,6 +15,10 @@ public class CubeManager : MonoBehaviour
         upRight,
         downRight
     }
+
+
+    [SerializeField]
+    List<string> recordedSteps = new List<string>();
 
     [SerializeField]
     CubeUnit selectedCubeUnit;
@@ -66,9 +73,14 @@ public class CubeManager : MonoBehaviour
     Globals.SwipeDirection latestSwipeDirection;
     private void OnGUI()
     {
-        GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
-        GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
-        GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
+        //GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
+        //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
+        //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
+
+        foreach (string value in recordedSteps)
+        {
+            GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+        }
     }
 
 
@@ -132,45 +144,45 @@ public class CubeManager : MonoBehaviour
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
-            StartCoroutine(RotateDownLeft());
+            Undo();
 
         if (Input.GetKeyUp(KeyCode.D))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.right);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.right,true);
         }
 
         if (Input.GetKeyUp(KeyCode.A))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.left);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.left, true);
         }
 
         if (Input.GetKeyUp(KeyCode.W))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.up);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.up, true);
         }
         if (Input.GetKeyUp(KeyCode.S))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.down);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.down, true);
         }
 
         if (Input.GetKeyUp(KeyCode.Q))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft, true);
         }
 
         if (Input.GetKeyUp(KeyCode.E))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight, true);
         }
 
         if (Input.GetKeyUp(KeyCode.Z))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft, true);
         }
 
         if (Input.GetKeyUp(KeyCode.C))
         {
-            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight);
+            Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
         }
 
         //if (Input.GetKeyUp(KeyCode.S))
@@ -178,153 +190,44 @@ public class CubeManager : MonoBehaviour
 
     }
 
+    void Undo() {
+        if (rotating || recordedSteps.Count == 0)
+            return;
 
-    IEnumerator RotateLeft()
-    {
-        //GrabSelectedCubeUnit();
 
         rotating = true;
+        //Grab Cube ID
+        string directionData = recordedSteps[recordedSteps.Count - 1].Split('_')[1];
 
 
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(true);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        //selectedCubeUnit.ToggleVerticalRightPlane(false);
+        
 
-        //yield return new WaitForSeconds(.1f);
+        //Get Rotation Direction
+        RotationDirection parsed_enum = (RotationDirection)System.Enum.Parse(typeof(RotationDirection), directionData);
 
-        //detectedCubes.Clear();
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
+        string cubeData = recordedSteps[recordedSteps.Count - 1].Split('_')[0];
+        //List<CubeUnit> cubesFromThePast = new List<CubeUnit>();
+        string[] cubeIDs = cubeData.Split('.');
+        for (int i = 0; i< cubeIDs.Length; i++)
         {
-            detectedCubes[i].transform.SetParent(rotator, true);
-            //yield return null;
+            CubeUnit newCube = allCubes[int.Parse(cubeIDs[i])];
+            detectedCubes.Add(newCube);
+            newCube.transform.SetParent(rotator, true);
         }
-        yield return null;
-        //selectedCubeUnit.horizontalPlane.Clear();
+        
+        Rotate(GetReverseDirection(parsed_enum));
 
-        //Rotate the Rotator
-        Rotate(RotationDirection.left);
+
+        recordedSteps.RemoveAt(recordedSteps.Count - 1);
     }
 
-    IEnumerator RotateRight()
-    {
-        //GrabSelectedCubeUnit();
+    void OnSwipeRotate(RotationDirection direction, CubePlane plane) {
 
-        rotating = true;
 
-        //detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(true);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        //selectedCubeUnit.ToggleVerticalRightPlane(false);
-
-        //yield return new WaitForSeconds(.1f);
+        RecordCubeRotation(plane.detectedCubes , direction);
 
         //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
-        {
-            detectedCubes[i].transform.SetParent(rotator, true);
-        }
-        yield return null;
-
-        //selectedCubeUnit.horizontalPlane.Clear();
-
-        //Rotate the Rotator
-        Rotate(RotationDirection.right);
-    }
-
-    IEnumerator RotateUpLeft()
-    {
-        //GrabSelectedCubeUnit();
-        rotating = true;
-
-
-        //detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(false);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        //selectedCubeUnit.ToggleVerticalRightPlane(true);
-
-        //yield return new WaitForSeconds(.1f);
-
-        //detectedCubes.Clear();
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
-        {
-            detectedCubes[i].transform.SetParent(rotator, true);
-        }
-        yield return null;
-
-        //selectedCubeUnit.verticalPlaneRight.Clear();
-
-        //Rotate the Rotator
-        Rotate(RotationDirection.upLeft);
-    }
-
-    IEnumerator RotateUpRight()
-    {
-        //GrabSelectedCubeUnit();
-        rotating = true;
-
-
-        //detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(false);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(true);
-        //selectedCubeUnit.ToggleVerticalRightPlane(false);
-
-        //yield return new WaitForSeconds(.1f);
-
-        //detectedCubes.Clear();
-
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
-        {
-            detectedCubes[i].transform.SetParent(rotator, true);
-        }
-        yield return null;
-
-        //selectedCubeUnit.verticalPlaneLeft.Clear();
-
-        //Rotate the Rotator
-        Rotate(RotationDirection.upRight);
-    }
-
-    IEnumerator RotateDownRight()
-    {
-        //GrabSelectedCubeUnit();
-        rotating = true;
-
-
-        //detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(false);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(false);
-        //selectedCubeUnit.ToggleVerticalRightPlane(true);
-
-        //yield return new WaitForSeconds(.1f);
-
-        //detectedCubes.Clear();
-
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
+        detectedCubes.AddRange(plane.detectedCubes);
 
         //Set Rotator as their parent
         for (int i = 0; i < detectedCubes.Count; i++)
@@ -332,45 +235,10 @@ public class CubeManager : MonoBehaviour
             detectedCubes[i].transform.SetParent(rotator, true);
         }
 
-        yield return null;
-        //selectedCubeUnit.verticalPlaneRight.Clear();
-
         //Rotate the Rotator
-        Rotate(RotationDirection.downRight);
+        Rotate(direction);
     }
 
-    IEnumerator RotateDownLeft()
-    {
-        //GrabSelectedCubeUnit();
-        rotating = true;
-
-
-        //detectorPlanes.position = selectedCubeUnit.transform.position;
-
-        //Enable Horizontal Plane for selected Cube unit
-        //selectedCubeUnit.ToggleHorizontalPlane(false);
-        //selectedCubeUnit.ToggleVerticalLeftPlane(true);
-        //selectedCubeUnit.ToggleVerticalRightPlane(false);
-
-        //yield return new WaitForSeconds(.1f);
-
-        //detectedCubes.Clear();
-
-        //Grab all Horizontal Cube units
-        detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
-
-        //Set Rotator as their parent
-        for (int i = 0; i < detectedCubes.Count; i++)
-        {
-            detectedCubes[i].transform.SetParent(rotator, true);
-        }
-        yield return null;
-
-        //selectedCubeUnit.verticalPlaneLeft.Clear();
-
-        //Rotate the Rotator
-        Rotate(RotationDirection.downLeft);
-    }
 
 
     public void Rotate(RotationDirection direction)
@@ -418,20 +286,20 @@ public class CubeManager : MonoBehaviour
 
         //Reset Rotator Rotation to zero
         rotator.rotation = Quaternion.Euler(0,0,0);
-        rotating = false;
         isTopFaceSelected = false;
-        selectedCubeUnit.ToggleAllPlanes(false);
-        selectedCubeUnit.ClearAllPlanesData();
+        selectedCubeUnit?.ToggleAllPlanes(false);
+        selectedCubeUnit?.ClearAllPlanesData();
         selectedCubeUnit = null;
 
         detectedCubes.Clear();
         Debug.LogError("Finish");
+        rotating = false;
     }
 
     #endregion
 
     #region Callbacks
-    void OnSwipe(Globals.SwipeDirection direction) {
+    void OnSwipe(Globals.SwipeDirection direction,bool isActualSwipe) {
         swipeDirection = direction;
         //avoid multiple inputs
         if (rotating)
@@ -443,75 +311,228 @@ public class CubeManager : MonoBehaviour
             return;
         }
 
+
+        rotating = true;
+
+        ////Record Input
+        //if (isActualSwipe)
+        //{
+        //    //RecordCubeRotation();
+        //}
+
         //Rotate Cube as per Swipe
         switch (swipeDirection)
         {
             case Globals.SwipeDirection.up:
                 if(isCubePlacedInLeftScreen())
-                    StartCoroutine(RotateUpRight());
+                    OnSwipeRotate(RotationDirection.upRight, selectedCubeUnit.verticalPlaneLeft);
                 else
-                    StartCoroutine(RotateUpLeft());
+                    OnSwipeRotate(RotationDirection.upLeft, selectedCubeUnit.verticalPlaneRight);
                 break;
 
             case Globals.SwipeDirection.down:
                 if (isCubePlacedInLeftScreen())
-                    StartCoroutine(RotateDownLeft());
+                    OnSwipeRotate(RotationDirection.downLeft, selectedCubeUnit.verticalPlaneLeft);
                 else
-                    StartCoroutine(RotateDownRight());
+                    OnSwipeRotate(RotationDirection.downRight, selectedCubeUnit.verticalPlaneRight);
                 break;
             case Globals.SwipeDirection.left:
                 if (isTopFaceSelected)
-                    StartCoroutine(RotateDownLeft());
+                    OnSwipeRotate(RotationDirection.downLeft, selectedCubeUnit.verticalPlaneLeft);
                 else
-                    StartCoroutine(RotateLeft());
+                    OnSwipeRotate(RotationDirection.left,selectedCubeUnit.horizontalPlane);
                 break;
             case Globals.SwipeDirection.right:
                 if (isTopFaceSelected)
-                    StartCoroutine(RotateUpRight());
+                    OnSwipeRotate(RotationDirection.downRight, selectedCubeUnit.verticalPlaneLeft);
                 else
-                    StartCoroutine(RotateRight());
+                    OnSwipeRotate(RotationDirection.right, selectedCubeUnit.horizontalPlane);
                 break;
             case Globals.SwipeDirection.upLeft:
-                StartCoroutine(RotateUpLeft());
+                OnSwipeRotate(RotationDirection.upLeft, selectedCubeUnit.verticalPlaneRight);
                 break;
             case Globals.SwipeDirection.downRight:
-                StartCoroutine(RotateDownRight());
+                OnSwipeRotate(RotationDirection.downRight, selectedCubeUnit.verticalPlaneRight);
                 break;
             case Globals.SwipeDirection.upRight:
-                StartCoroutine(RotateUpRight());
+                OnSwipeRotate(RotationDirection.upRight, selectedCubeUnit.verticalPlaneLeft);
                 break;
             case Globals.SwipeDirection.downLeft:
-                StartCoroutine(RotateDownLeft());
+                OnSwipeRotate(RotationDirection.downLeft, selectedCubeUnit.verticalPlaneLeft);
                 break;
         }
 
         latestSwipeDirection = swipeDirection;
     }
 
-    bool isCubePlacedInLeftScreen() {
+
+
+
+    void RecordCubeRotation(List<CubeUnit> cubes,RotationDirection direction) {
+        string value = "";
+        //Record Cube IDs
+        for (int i = 0; i < cubes.Count; i++) {
+            value += cubes[i].uniqueID;
+            if(i<cubes.Count-1)
+               value += ".";
+        }
+
+        //Record rotationDirection
+        value += "_" + System.Enum.GetName(typeof(RotationDirection), direction);
+
+
+        Debug.LogError("Record Entry = " + value);
+
+        recordedSteps.Add(value);
+    }
+    #endregion
+
+
+    #region utility
+
+    bool isCubePlacedInLeftScreen()
+    {
         if (mousePositionXOnInput > screenhalf)
             return false;
         else
             return true;
     }
 
-    //bool isTopMostCube() {
 
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(transform.position, Vector3.left, out hit, 100))
+    RotationDirection GetReverseDirection(RotationDirection direction)
+    {
+        switch (direction)
+        {
+            case RotationDirection.left:
+                return RotationDirection.right;
+
+            case RotationDirection.right:
+                return RotationDirection.left;
+
+            case RotationDirection.upLeft:
+                return RotationDirection.downRight;
+
+            case RotationDirection.downRight:
+                return RotationDirection.upLeft;
+
+            case RotationDirection.upRight:
+                return RotationDirection.downLeft;
+
+            case RotationDirection.downLeft:
+                return RotationDirection.upRight;
+
+            default:
+                Debug.LogError("Unable to get Reverse Direction");
+                return RotationDirection.left;
+        }
+    }
+    #endregion
+
+
+
+    #region Deprecated Methods
+    //IEnumerator RotateLeft()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
     //    {
-    //        Debug.LogError("Cube not at top, Obj at top = " + hit.transform.name);
-    //        return false;
+    //        detectedCubes[i].transform.SetParent(rotator, true);
+    //        //yield return null;
     //    }
-    //    else
+    //    yield return null;
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.left);
+    //}
+
+    //IEnumerator RotateRight()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
     //    {
-    //        Debug.LogError("Top Most Cube seleced");
-    //        return true;
+    //        detectedCubes[i].transform.SetParent(rotator, true);
+    //    }
+    //    yield return null;
+
+    //    //selectedCubeUnit.horizontalPlane.Clear();
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.right);
+    //}
+
+    //IEnumerator RotateUpLeft()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
+    //    {
+    //        detectedCubes[i].transform.SetParent(rotator, true);
+    //    }
+    //    yield return null;
+
+    //    //selectedCubeUnit.verticalPlaneRight.Clear();
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.upLeft);
+    //}
+
+    //IEnumerator RotateUpRight()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
+    //    {
+    //        detectedCubes[i].transform.SetParent(rotator, true);
+    //    }
+    //    yield return null;
+
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.upRight);
+    //}
+
+    //IEnumerator RotateDownRight()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
+    //    {
+    //        detectedCubes[i].transform.SetParent(rotator, true);
     //    }
 
-    //    //Raycast on top of the selected cube
-    //    //If hit returns another cube then return false
-    //    //If hit returns nothing cube then return true
+    //    yield return null;
+    //    //selectedCubeUnit.verticalPlaneRight.Clear();
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.downRight);
+    //}
+
+    //IEnumerator RotateDownLeft()
+    //{
+    //    //Grab all Horizontal Cube units
+    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
+
+    //    //Set Rotator as their parent
+    //    for (int i = 0; i < detectedCubes.Count; i++)
+    //    {
+    //        detectedCubes[i].transform.SetParent(rotator, true);
+    //    }
+    //    yield return null;
+
+    //    //Rotate the Rotator
+    //    Rotate(RotationDirection.downLeft);
     //}
     #endregion
 }

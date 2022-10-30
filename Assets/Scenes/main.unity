@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.1904741, g: 0.59286916, b: 0.7718018, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -124,102 +124,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &94125839
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 94125843}
-  - component: {fileID: 94125842}
-  - component: {fileID: 94125841}
-  - component: {fileID: 94125840}
-  m_Layer: 0
-  m_Name: BG
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
-  m_IsActive: 0
---- !u!64 &94125840
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94125839}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &94125841
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94125839}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 11a56ffdbba1940d8b9316f3eb7300c8, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &94125842
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94125839}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &94125843
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 94125839}
-  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -1.952, y: -1.1719, z: -1.8232}
-  m_LocalScale: {x: 2.3845837, y: 3.047157, z: 8}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 8
-  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1 &187218440
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,8 +725,8 @@ Camera:
   m_GameObject: {fileID: 963194225}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0, g: 0.87560844, b: 1, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -898,6 +802,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7514eaa212544bb594d7f31e5eaa72c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allCubes:
+  - {fileID: 8767432347830885528}
+  - {fileID: 5682982030739937997}
+  - {fileID: 958810302994494204}
+  - {fileID: 8450889246546522029}
+  - {fileID: 5510179364153227508}
+  - {fileID: 1288842550325080145}
+  - {fileID: 7099466529784513864}
+  - {fileID: 4885641289137766783}
+  - {fileID: 6936594140865662995}
+  - {fileID: 3812554951242779593}
+  - {fileID: 8337748933202552559}
+  - {fileID: 529829618728445253}
+  - {fileID: 4694066581585533730}
+  - {fileID: 7197790198432438397}
+  - {fileID: 2975953962713655267}
+  - {fileID: 3808668145283661111}
+  - {fileID: 7671689427148748343}
+  - {fileID: 5338210808643817228}
+  - {fileID: 5508684102683559804}
+  - {fileID: 6123943328120183146}
+  - {fileID: 2626973599604256043}
+  - {fileID: 3364521319674506201}
+  - {fileID: 8460087729938227127}
+  - {fileID: 7962719016717480558}
+  - {fileID: 1907647018564491399}
+  - {fileID: 7362775033595167892}
+  - {fileID: 1371197737685223529}
+  recordedSteps: []
   selectedCubeUnit: {fileID: 0}
   rotator: {fileID: 1300167240}
   rubikCube: {fileID: 543450653046494864}
@@ -1449,6 +1382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 11
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -1615,6 +1549,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 2
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -1736,6 +1671,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 5
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -1798,6 +1734,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 26
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2001,6 +1938,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 24
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2101,6 +2039,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 20
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2179,6 +2118,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 14
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2300,6 +2240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 21
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2420,6 +2361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 15
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2468,6 +2410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 9
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2704,6 +2647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 12
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2766,6 +2710,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 7
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2858,6 +2803,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 17
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2914,6 +2860,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 18
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -2962,6 +2909,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 4
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3062,6 +3010,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 1
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3285,6 +3234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 19
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3543,6 +3493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 8
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3586,6 +3537,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 6
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3655,6 +3607,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 13
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3748,6 +3701,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 25
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3869,6 +3823,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 16
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -3939,6 +3894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 23
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -4061,6 +4017,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 10
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -4109,6 +4066,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 3
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -4157,6 +4115,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 22
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}
@@ -4205,6 +4164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee10512c48397443e8a70f9bf6ea8e38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  uniqueID: 0
   horizontalPlane: {fileID: 187218445}
   verticalPlaneLeft: {fileID: 1381136666}
   verticalPlaneRight: {fileID: 680972454}

@@ -134,7 +134,7 @@ public class InputManager : MonoBehaviour
                     //return;
                 }
 
-                Globals.OnSwipe.Invoke(swipeDirection);
+                Globals.OnSwipe.Invoke(swipeDirection, true);
             }
 
         }

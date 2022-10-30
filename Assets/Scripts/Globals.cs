@@ -24,5 +24,5 @@ public static class Globals
 
 
 
-    public static Action<SwipeDirection> OnSwipe;
+    public static Action<SwipeDirection,bool> OnSwipe;
 }
