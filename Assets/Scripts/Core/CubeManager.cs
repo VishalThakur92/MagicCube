@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace MagicCubeVishal
 {
-    public class CubeManager : MonoBehaviour
-    {
-
+    public class CubeManager : MonoBehaviour{
         #region Parameters
         //Singelton Instance
         public static CubeManager Instance { get; private set; }
@@ -76,6 +74,77 @@ namespace MagicCubeVishal
         #endregion
 
 
+        #region Testing
+
+        private GUIStyle guiStyle = new GUIStyle();
+        //Globals.SwipeDirection latestSwipeDirection;
+        private void OnGUI()
+        {
+            //GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
+            //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
+            //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
+
+            foreach (string value in rotationSteps)
+            {
+                GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+            }
+        }
+
+
+
+        Vector3 DebugRaydirection;
+
+
+        //Controls for Editor testing
+        public void Update()
+        {
+            if (selectedCubeUnit)
+                Debug.DrawLine(selectedCubeUnit.transform.position, DebugRaydirection, Color.green);
+
+            if (rotating)
+                return;
+
+
+            if (Input.GetKeyUp(KeyCode.Space))
+                Undo();
+
+            if (Input.GetKeyUp(KeyCode.D))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.right, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.A))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.left, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.W))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.up, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.S))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.down, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.Q))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.E))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.Z))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft, true);
+            }
+            else if (Input.GetKeyUp(KeyCode.C))
+            {
+                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
+            }
+
+        }
+        #endregion
+
+
         #region Methods
 
         private void Awake()
@@ -114,11 +183,19 @@ namespace MagicCubeVishal
             }
             else//Fresh new Game
             {
-                SubsribeToInputEvents();
+                SubsribeToEvents();
             }
         }
 
-        void SubsribeToInputEvents()
+        void SubsribeToEvents()
+        {
+            //Subscribe to Event Brodcasts
+            Globals.OnSwipe += OnSwipe;
+            Globals.OnPointerDown += OnTryGrabCubeUnit;
+            Globals.OnPointerUp += OnPointerUp;
+        }
+
+        void UnSubsribeFromEvents()
         {
             //Subscribe to Event Brodcasts
             Globals.OnSwipe += OnSwipe;
@@ -156,26 +233,7 @@ namespace MagicCubeVishal
             //rotationSteps.Clear();
 
             //Once all step rotations have been applied
-            SubsribeToInputEvents();
-        }
-
-        private void OnDestroy()
-        {
-            Globals.OnSwipe -= OnSwipe;
-        }
-
-        private GUIStyle guiStyle = new GUIStyle();
-        //Globals.SwipeDirection latestSwipeDirection;
-        private void OnGUI()
-        {
-            //GUILayout.Label($"Mouse Position x = {Input.mousePosition.x} y = {Input.mousePosition.y}", guiStyle);
-            //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
-            //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
-
-            foreach (string value in rotationSteps)
-            {
-                GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
-            }
+            SubsribeToEvents();
         }
 
 
@@ -228,57 +286,6 @@ namespace MagicCubeVishal
             }
         }
 
-        Vector3 DebugRaydirection;
-
-
-        //Controls for Editor testing
-        public void Update()
-        {
-            if (selectedCubeUnit)
-                Debug.DrawLine(selectedCubeUnit.transform.position, DebugRaydirection, Color.green);
-
-            if (rotating)
-                return;
-
-
-            if (Input.GetKeyUp(KeyCode.Space))
-                Undo();
-
-            if (Input.GetKeyUp(KeyCode.D))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.right, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.A))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.left, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.W))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.up, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.S))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.down, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.Q))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.E))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.Z))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft, true);
-            }
-            else if (Input.GetKeyUp(KeyCode.C))
-            {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
-            }
-
-        }
-
         public void Undo()
         {
             if (rotating || rotationSteps.Count == 0)
@@ -309,35 +316,6 @@ namespace MagicCubeVishal
             rotationSteps.RemoveAt(rotationSteps.Count - 1);
         }
 
-
-        //Does a specified step
-        //public void Redo() {
-
-        //    rotating = true;
-        //    //Grab Cube ID
-        //    string directionData = rotationSteps[rotationSteps.Count - 1].Split('_')[1];
-
-
-
-
-        //    //Get Rotation Direction
-        //    Globals.CubeRotationDirection parsed_enum = (Globals.CubeRotationDirection)System.Enum.Parse(typeof(Globals.CubeRotationDirection), directionData);
-
-        //    string cubeData = rotationSteps[rotationSteps.Count - 1].Split('_')[0];
-        //    //List<CubeUnit> cubesFromThePast = new List<CubeUnit>();
-        //    string[] cubeIDs = cubeData.Split('.');
-        //    for (int i = 0; i < cubeIDs.Length; i++)
-        //    {
-        //        CubeUnit newCube = currentMagicCube.allCubeUnits[int.Parse(cubeIDs[i])];
-        //        detectedCubes.Add(newCube);
-        //        newCube.transform.SetParent(rotator, true);
-        //    }
-
-        //    Rotate(GetReverseDirection(parsed_enum));
-
-
-        //    rotationSteps.RemoveAt(rotationSteps.Count - 1);
-        //}
 
 
         void OnSwipeRotate(Globals.CubeRotationDirection direction, CubePlane plane)
@@ -471,6 +449,45 @@ namespace MagicCubeVishal
             rotating = false;
         }
 
+
+
+        void RecordCubeRotation(List<CubeUnit> cubes, Globals.CubeRotationDirection direction)
+        {
+            string value = "";
+            //Record Cube IDs
+            for (int i = 0; i < cubes.Count; i++)
+            {
+                value += cubes[i].uniqueID;
+                if (i < cubes.Count - 1)
+                    value += ".";
+            }
+
+            if (string.IsNullOrEmpty(value))
+                return;
+
+            //Record CubeRotationDirection
+            value += "_" + System.Enum.GetName(typeof(Globals.CubeRotationDirection), direction);
+
+
+            Debug.LogError("Record Entry = " + value);
+
+            rotationSteps.Add(value);
+        }
+
+        public void ToggleAllPlanes(bool flag)
+        {
+            planeY.gameObject.SetActive(flag);
+            planeZ.gameObject.SetActive(flag);
+            planeX.gameObject.SetActive(flag);
+        }
+
+        public void ClearAllPlanesData()
+        {
+            planeY.Clear();
+            planeZ.Clear();
+            planeX.Clear();
+        }
+
         #endregion
 
         #region Callbacks
@@ -544,43 +561,12 @@ namespace MagicCubeVishal
 
 
 
-        void RecordCubeRotation(List<CubeUnit> cubes, Globals.CubeRotationDirection direction)
+
+
+        private void OnDestroy()
         {
-            string value = "";
-            //Record Cube IDs
-            for (int i = 0; i < cubes.Count; i++)
-            {
-                value += cubes[i].uniqueID;
-                if (i < cubes.Count - 1)
-                    value += ".";
-            }
-
-            if (string.IsNullOrEmpty(value))
-                return;
-
-            //Record CubeRotationDirection
-            value += "_" + System.Enum.GetName(typeof(Globals.CubeRotationDirection), direction);
-
-
-            Debug.LogError("Record Entry = " + value);
-
-            rotationSteps.Add(value);
+            UnSubsribeFromEvents();
         }
-
-        public void ToggleAllPlanes(bool flag)
-        {
-            planeY.gameObject.SetActive(flag);
-            planeZ.gameObject.SetActive(flag);
-            planeX.gameObject.SetActive(flag);
-        }
-
-        public void ClearAllPlanesData()
-        {
-            planeY.Clear();
-            planeZ.Clear();
-            planeX.Clear();
-        }
-
 
         public void OnFinish()
         {
@@ -589,11 +575,7 @@ namespace MagicCubeVishal
 
             rotationSteps.Clear();
 
-
-            //UnSubscribe to Event Brodcasts
-            Globals.OnSwipe -= OnSwipe;
-            Globals.OnPointerDown -= OnTryGrabCubeUnit;
-            Globals.OnPointerUp -= OnPointerUp;
+            UnSubsribeFromEvents();
         }
 
         void OnTryGrabCubeUnit()
@@ -609,7 +591,6 @@ namespace MagicCubeVishal
 
 
         #region utility
-
         bool isCubePlacedInLeftScreen()
         {
             if (mousePositionXOnInput > screenhalf)
