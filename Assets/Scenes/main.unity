@@ -293,12 +293,12 @@ GameObject:
   - component: {fileID: 187218446}
   - component: {fileID: 187218445}
   m_Layer: 7
-  m_Name: horizontalPlane
+  m_Name: PlaneY
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &187218441
 Transform:
   m_ObjectHideFlags: 0
@@ -1582,12 +1582,12 @@ GameObject:
   - component: {fileID: 680972454}
   - component: {fileID: 680972453}
   m_Layer: 7
-  m_Name: verticalPlaneRight
+  m_Name: planeX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &680972452
 Transform:
   m_ObjectHideFlags: 0
@@ -1969,7 +1969,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 787829117}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2817,15 +2817,14 @@ MonoBehaviour:
   - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
   rotationSteps: []
   rotator: {fileID: 1300167240}
-  detectedCubes: []
   rotating: 0
   lerpDuration: 0.12
   rotationMulitplier: 90
   isTopFaceSelected: 0
-  detectorPlanes: {fileID: 2048440264}
-  horizontalPlane: {fileID: 187218445}
-  verticalPlaneLeft: {fileID: 1381136666}
-  verticalPlaneRight: {fileID: 680972454}
+  detectorPlanesParent: {fileID: 2048440264}
+  planeY: {fileID: 187218445}
+  planeZ: {fileID: 1381136666}
+  planeX: {fileID: 680972454}
 --- !u!4 &1128126065
 Transform:
   m_ObjectHideFlags: 0
@@ -3494,12 +3493,12 @@ GameObject:
   - component: {fileID: 1381136666}
   - component: {fileID: 1381136665}
   m_Layer: 7
-  m_Name: verticalPlaneLeft
+  m_Name: planeZ
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1381136664
 Transform:
   m_ObjectHideFlags: 0
@@ -4521,7 +4520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2048440264}
   m_Layer: 7
-  m_Name: DetectorPlanes
+  m_Name: DetectorPlanesParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

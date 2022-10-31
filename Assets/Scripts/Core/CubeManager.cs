@@ -12,9 +12,11 @@ namespace MagicCubeVishal
         public static CubeManager Instance { get; private set; }
 
         //The Currently selected Magic Cube
+        [HideInInspector]
         public MagicCube currentMagicCube;
 
         //The Currently selected Magic Cube's Render Camera
+        [HideInInspector]
         public Camera currentMagicCubeCamera;
 
         //Selected Magic Cube's prefab is instantiated as child of this obj
@@ -25,6 +27,7 @@ namespace MagicCubeVishal
         List<MagicCube> allMagicCubes = new List<MagicCube>();
 
         //The Steps being Recorded with every Cube move
+        [HideInInspector]
         public List<string> rotationSteps = new List<string>();
 
 
@@ -38,7 +41,6 @@ namespace MagicCubeVishal
         Transform rotator;
 
         //Reference of the Cubes detected by detector plane, these will be placed inside rotator to be rotated in the specified Input Direction
-        [SerializeField]
         List<CubeUnit> detectedCubes = new List<CubeUnit>();
 
         //Is the Magic Cube rotating via a given Input Direction
@@ -68,9 +70,9 @@ namespace MagicCubeVishal
 
         //Detector planes are used to Grab all corressponding cubes in the specified Input Direction
         [Space(10), SerializeField]
-        Transform detectorPlanes;
+        Transform detectorPlanesParent;
         [SerializeField]
-        public CubePlane horizontalPlane, verticalPlaneLeft, verticalPlaneRight;
+        public CubePlane planeY, planeZ, planeX;
         #endregion
 
 
@@ -189,7 +191,7 @@ namespace MagicCubeVishal
 
                     detectedCubes.Clear();
                     Debug.LogError(hit.transform.name);
-                    detectorPlanes.position = selectedCubeUnit.transform.position;
+                    detectorPlanesParent.position = selectedCubeUnit.transform.position;
                     ClearAllPlanesData();
                     yield return null;
                     ToggleAllPlanes(true);
@@ -499,40 +501,40 @@ namespace MagicCubeVishal
             {
                 case Globals.SwipeDirection.up:
                     if (isCubePlacedInLeftScreen())
-                        OnSwipeRotate(Globals.CubeRotationDirection.upRight, verticalPlaneLeft);
+                        OnSwipeRotate(Globals.CubeRotationDirection.upRight, planeZ);
                     else
-                        OnSwipeRotate(Globals.CubeRotationDirection.upLeft, verticalPlaneRight);
+                        OnSwipeRotate(Globals.CubeRotationDirection.upLeft, planeX);
                     break;
 
                 case Globals.SwipeDirection.down:
                     if (isCubePlacedInLeftScreen())
-                        OnSwipeRotate(Globals.CubeRotationDirection.downLeft, verticalPlaneLeft);
+                        OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     else
-                        OnSwipeRotate(Globals.CubeRotationDirection.downRight, verticalPlaneRight);
+                        OnSwipeRotate(Globals.CubeRotationDirection.downRight, planeX);
                     break;
                 case Globals.SwipeDirection.left:
                     if (isTopFaceSelected)
-                        OnSwipeRotate(Globals.CubeRotationDirection.downLeft, verticalPlaneLeft);
+                        OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     else
-                        OnSwipeRotate(Globals.CubeRotationDirection.left, horizontalPlane);
+                        OnSwipeRotate(Globals.CubeRotationDirection.left, planeY);
                     break;
                 case Globals.SwipeDirection.right:
                     if (isTopFaceSelected)
-                        OnSwipeRotate(Globals.CubeRotationDirection.upRight, verticalPlaneLeft);
+                        OnSwipeRotate(Globals.CubeRotationDirection.upRight, planeZ);
                     else
-                        OnSwipeRotate(Globals.CubeRotationDirection.right, horizontalPlane);
+                        OnSwipeRotate(Globals.CubeRotationDirection.right, planeY);
                     break;
                 case Globals.SwipeDirection.upLeft:
-                    OnSwipeRotate(Globals.CubeRotationDirection.upLeft, verticalPlaneRight);
+                    OnSwipeRotate(Globals.CubeRotationDirection.upLeft, planeX);
                     break;
                 case Globals.SwipeDirection.downRight:
-                    OnSwipeRotate(Globals.CubeRotationDirection.downRight, verticalPlaneRight);
+                    OnSwipeRotate(Globals.CubeRotationDirection.downRight, planeX);
                     break;
                 case Globals.SwipeDirection.upRight:
-                    OnSwipeRotate(Globals.CubeRotationDirection.upRight, verticalPlaneLeft);
+                    OnSwipeRotate(Globals.CubeRotationDirection.upRight, planeZ);
                     break;
                 case Globals.SwipeDirection.downLeft:
-                    OnSwipeRotate(Globals.CubeRotationDirection.downLeft, verticalPlaneLeft);
+                    OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     break;
             }
 
@@ -567,16 +569,16 @@ namespace MagicCubeVishal
 
         public void ToggleAllPlanes(bool flag)
         {
-            horizontalPlane.gameObject.SetActive(flag);
-            verticalPlaneLeft.gameObject.SetActive(flag);
-            verticalPlaneRight.gameObject.SetActive(flag);
+            planeY.gameObject.SetActive(flag);
+            planeZ.gameObject.SetActive(flag);
+            planeX.gameObject.SetActive(flag);
         }
 
         public void ClearAllPlanesData()
         {
-            horizontalPlane.Clear();
-            verticalPlaneLeft.Clear();
-            verticalPlaneRight.Clear();
+            planeY.Clear();
+            planeZ.Clear();
+            planeX.Clear();
         }
 
 
