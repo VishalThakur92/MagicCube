@@ -25,16 +25,19 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start()
+
+    //Starts the Game with the Specified Parameters
+    void StartGame(Globals.CubeType type)
     {
-        StartGame();
-    }
-
-
-    public void StartGame() {
+        //set the specified Cube type
+        currentMagicCubeType = type;
         CubeManager.Instance.Initialize(currentMagicCubeType);
 
         UIManager.Instance.SetCanvasCamera(CubeManager.Instance.currentMagicCube.respectiveCamera);
+    }
+
+    public void StartGame(int cubeType) {
+        StartGame((Globals.CubeType)cubeType);
     }
     #endregion
 

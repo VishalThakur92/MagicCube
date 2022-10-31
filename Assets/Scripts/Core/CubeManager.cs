@@ -123,7 +123,7 @@ public class CubeManager : MonoBehaviour
 
 
     IEnumerator GrabSelectedCubeUnit() {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, 100))
         {
             selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
