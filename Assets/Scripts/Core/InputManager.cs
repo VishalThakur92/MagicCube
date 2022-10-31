@@ -32,7 +32,7 @@ namespace MagicCubeVishal
         }
 
         //Current Swipe Direction
-        Globals.SwipeDirection swipeDirection = Globals.SwipeDirection.none;
+        Globals.SwipeDirection swipeDirection;
 
 
 

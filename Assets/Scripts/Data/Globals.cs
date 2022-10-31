@@ -11,9 +11,7 @@ namespace MagicCubeVishal
         //Possible directions of Swipes in the Current Input System
         public enum SwipeDirection
         {
-            none,
-
-            up,
+            up = 0,
             down,
             left,
             right,
@@ -27,7 +25,7 @@ namespace MagicCubeVishal
         //Possible Cube Rotation Directions
         public enum CubeRotationDirection
         {
-            left,
+            left=0,
             right,
             upLeft,
             downLeft,
@@ -45,6 +43,12 @@ namespace MagicCubeVishal
             size5,
             size6
         }
+        #endregion
+
+
+        #region Parameters
+        public static int MinimumShuffleSteps = 5;
+        public static int MaximumShuffleSteps = 20;
         #endregion
 
 

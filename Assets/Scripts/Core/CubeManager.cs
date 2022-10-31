@@ -84,10 +84,12 @@ namespace MagicCubeVishal
             //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
             //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
 
-            foreach (string value in rotationSteps)
-            {
-                GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
-            }
+            //foreach (string value in rotationSteps)
+            //{
+            //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+            //}
+
+                GUILayout.Label($"rotating = {rotating}", guiStyle);
         }
 
 
@@ -107,6 +109,8 @@ namespace MagicCubeVishal
 
             if (Input.GetKeyUp(KeyCode.Space))
                 Undo();
+
+
 
             if (Input.GetKeyUp(KeyCode.D))
             {
@@ -140,13 +144,16 @@ namespace MagicCubeVishal
             {
                 Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
             }
+            else if (Input.GetKeyUp(KeyCode.P))
+            {
+                Shuffle();
+            }
 
         }
         #endregion
 
 
         #region Methods
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -203,10 +210,55 @@ namespace MagicCubeVishal
             Globals.OnPointerUp += OnPointerUp;
         }
 
+        void Shuffle() {
+            StartCoroutine(ShuffleBehaviour());
+        }
+
+
+        //Shuffle the Current Magic Cube Randomly
+        IEnumerator ShuffleBehaviour() {
+            //total number of shuffle steps - RANOM
+            int shuffleSteps = Random.Range(Globals.MinimumShuffleSteps , Globals.MaximumShuffleSteps);
+            Debug.LogError($"Will Rotate for {shuffleSteps} steps");
+            //CubeUnit randomCubeUnit;
+            Globals.SwipeDirection randomSwipe;
+            //Shuffle the magic Cube x times where, x = shuffleSteps
+            for (int i = 0; i < shuffleSteps; i++) {
+                //rotating = true;
+                //Select a random cube unit
+                selectedCubeUnit = currentMagicCube.allCubeUnits[Random.Range(0, currentMagicCube.allCubeUnits.Count)];
+
+                //Select a random rotation
+                randomSwipe = (Globals.SwipeDirection)Random.Range(0, 8);
+
+                Debug.LogError($"Applying random rotation: {randomSwipe} on {selectedCubeUnit.name}");
+
+                detectedCubes.Clear();
+                detectorPlanesParent.position = selectedCubeUnit.transform.position;
+                ClearAllPlanesData();
+                ToggleAllPlanes(true);
+
+                //Wait for x seconds as to Simulate a click
+                yield return new WaitForSeconds(.1f);
+
+                OnPointerUp();
+
+                //Apply random rotation to the Random Cube units
+                OnSwipe(randomSwipe, false);
+
+                //Wait untill this animation
+
+                //yield return new WaitForSeconds(2);
+                yield return new WaitUntil(() => !rotating);
+            }
+
+            //Clear Rotation Steps as we dont want the user to keep pressing UNDO and setting the Cube to Solved state
+            rotationSteps.Clear();
+        }
+
 
         void ApplyAllRotationSteps()
         {
-
             rotating = true;
 
             //Wait for All Steps to be applied
@@ -320,8 +372,6 @@ namespace MagicCubeVishal
 
         void OnSwipeRotate(Globals.CubeRotationDirection direction, CubePlane plane)
         {
-
-
             RecordCubeRotation(plane.detectedCubes, direction);
 
             //Grab all Horizontal Cube units
@@ -413,6 +463,7 @@ namespace MagicCubeVishal
             rotating = false;
         }
 
+
         IEnumerator RotationBehaviourAsync(Quaternion targetRotation)
         {
             float timeElapsed = 0;
@@ -429,13 +480,10 @@ namespace MagicCubeVishal
             rotator.rotation = targetRotation;
             yield return new WaitForEndOfFrame();
             //Put Detected Cubes back into Rubik Cube from Rotator
-            // Set Rotator as their parent
             for (int i = 0; i < detectedCubes.Count; i++)
             {
                 detectedCubes[i].transform.SetParent(currentMagicCube.transform, true);
-                //yield return null;
             }
-
 
             //Reset Rotator Rotation to zero
             rotator.rotation = Quaternion.Euler(0, 0, 0);
@@ -506,12 +554,6 @@ namespace MagicCubeVishal
 
 
             rotating = true;
-
-            ////Record Input
-            //if (isActualSwipe)
-            //{
-            //    //RecordCubeRotation();
-            //}
 
             //Rotate Cube as per Swipe
             switch (direction)
