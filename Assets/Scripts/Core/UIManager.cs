@@ -4,47 +4,52 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class UIManager : MonoBehaviour
+namespace MagicCubeVishal
 {
-
-    #region Parameters
-    //Singelton Instance
-    public static UIManager Instance { get; private set; }
-
-    [SerializeField]
-    Canvas canvas;
-
-    [SerializeField]
-    Button loadSavedGameButton;
-    #endregion
-
-
-    #region Methods
-    void Awake()
+    public class UIManager : MonoBehaviour
     {
-        if (Instance != null && Instance != this)
+
+        #region Parameters
+        //Singelton Instance
+        public static UIManager Instance { get; private set; }
+
+        [SerializeField]
+        Canvas canvas;
+
+        [SerializeField]
+        Button loadSavedGameButton;
+        #endregion
+
+
+        #region Methods
+        void Awake()
         {
-            Destroy(this);
-            return;
+            if (Instance != null && Instance != this)
+            {
+                Destroy(this);
+                return;
+            }
+            Instance = this;
         }
-        Instance = this;
-    }
 
-    //Set the Canvas ScreenOverlay Camera
-    public void SetCanvasCamera(Camera camera) {
-        canvas.renderMode = RenderMode.ScreenSpaceCamera;
-        canvas.worldCamera = camera;
-        camera.gameObject.SetActive(true);
-    }
+        //Set the Canvas ScreenOverlay Camera
+        public void SetCanvasCamera(Camera camera)
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.worldCamera = camera;
+            camera.gameObject.SetActive(true);
+        }
 
-    public void OnFinish()
-    {
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.worldCamera.gameObject.SetActive(false);
-    }
+        public void OnFinish()
+        {
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.worldCamera.gameObject.SetActive(false);
+        }
 
-    public void ToggleLoadGameButton(bool flag) {
-        loadSavedGameButton.gameObject.SetActive(flag);
+        public void ToggleLoadGameButton(bool flag)
+        {
+            loadSavedGameButton.gameObject.SetActive(flag);
+        }
+        #endregion
     }
-    #endregion
 }

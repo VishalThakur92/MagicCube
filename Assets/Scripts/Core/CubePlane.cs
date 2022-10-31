@@ -2,23 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CubePlane : MonoBehaviour
+namespace MagicCubeVishal
 {
-
-    [SerializeField]
-    public List<CubeUnit> detectedCubes = new List<CubeUnit>();
-
-    private void OnTriggerEnter(Collider other)
+    public class CubePlane : MonoBehaviour
     {
-        CubeUnit newCube = other.GetComponent<CubeUnit>();
-        if(newCube && !detectedCubes.Contains(newCube))
-            detectedCubes.Add(newCube);
+
+        [SerializeField]
+        public List<CubeUnit> detectedCubes = new List<CubeUnit>();
+
+        private void OnTriggerEnter(Collider other)
+        {
+            CubeUnit newCube = other.GetComponent<CubeUnit>();
+            if (newCube && !detectedCubes.Contains(newCube))
+                detectedCubes.Add(newCube);
+        }
+
+
+
+        public void Clear()
+        {
+            detectedCubes.Clear();
+        }
+
     }
-
-
-
-    public void Clear() {
-        detectedCubes.Clear();
-    }
-
 }
