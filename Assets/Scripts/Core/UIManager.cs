@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+
 
 public class UIManager : MonoBehaviour
 {
@@ -11,6 +13,9 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     Canvas canvas;
+
+    [SerializeField]
+    Button loadSavedGameButton;
     #endregion
 
 
@@ -36,6 +41,10 @@ public class UIManager : MonoBehaviour
     {
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.worldCamera.gameObject.SetActive(false);
+    }
+
+    public void ToggleLoadGameButton(bool flag) {
+        loadSavedGameButton.gameObject.SetActive(flag);
     }
     #endregion
 }

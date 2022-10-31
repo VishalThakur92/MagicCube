@@ -16,7 +16,7 @@ public class CubeManager : MonoBehaviour
     List<MagicCube> allMagicCubes = new List<MagicCube>();
 
     //The Steps being Recorded with every Cube move
-    List<string> recordedSteps = new List<string>();
+    public List<string> rotationSteps = new List<string>();
 
 
     //Selected Magic Cube's Individual Cube Unit
@@ -97,13 +97,54 @@ public class CubeManager : MonoBehaviour
         //Enable the currently selected Magic Cube type
         currentMagicCube.gameObject.SetActive(true);
 
+
+        if (rotationSteps.Count > 0)
+        {
+            ApplyAllRotationSteps();
+        }
+        else {
+            SubsribeToInputEvents();
+        }
+    }
+
+    void SubsribeToInputEvents() {
         //Subscribe to Event Brodcasts
         Globals.OnSwipe += OnSwipe;
         Globals.OnPointerDown += OnTryGrabCubeUnit;
         Globals.OnPointerUp += OnPointerUp;
-
     }
 
+
+    void ApplyAllRotationSteps() {
+
+        rotating = true;
+
+        //Wait for All Steps to be applied
+        for (int j = 0; j < rotationSteps.Count; j++)
+        {
+            //Grab Cube ID
+            string directionData = rotationSteps[j].Split('_')[1];
+            //Get Rotation Direction
+            Globals.CubeRotationDirection parsed_enum = (Globals.CubeRotationDirection)System.Enum.Parse(typeof(Globals.CubeRotationDirection), directionData);
+
+            string cubeData = rotationSteps[j].Split('_')[0];
+            string[] cubeIDs = cubeData.Split('.');
+            for (int i = 0; i < cubeIDs.Length; i++)
+            {
+                CubeUnit newCube = currentMagicCube.allCubeUnits[int.Parse(cubeIDs[i])];
+                detectedCubes.Add(newCube);
+                newCube.transform.SetParent(rotator, true);
+            }
+
+            Rotate(parsed_enum,false);
+        }
+
+        //Clear all rotation Steps since all of them have been applied
+        //rotationSteps.Clear();
+
+        //Once all step rotations have been applied
+        SubsribeToInputEvents();
+    }
 
     private void OnDestroy()
     {
@@ -118,10 +159,10 @@ public class CubeManager : MonoBehaviour
         //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
         //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
 
-        //foreach (string value in recordedSteps)
-        //{
-        //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
-        //}
+        foreach (string value in rotationSteps)
+        {
+            GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+        }
     }
 
 
@@ -221,21 +262,19 @@ public class CubeManager : MonoBehaviour
     }
 
     public void Undo() {
-        if (rotating || recordedSteps.Count == 0)
+        if (rotating || rotationSteps.Count == 0)
             return;
 
 
         rotating = true;
         //Grab Cube ID
-        string directionData = recordedSteps[recordedSteps.Count - 1].Split('_')[1];
+        string directionData = rotationSteps[rotationSteps.Count - 1].Split('_')[1];
 
-
-        
 
         //Get Rotation Direction
         Globals.CubeRotationDirection parsed_enum = (Globals.CubeRotationDirection)System.Enum.Parse(typeof(Globals.CubeRotationDirection), directionData);
 
-        string cubeData = recordedSteps[recordedSteps.Count - 1].Split('_')[0];
+        string cubeData = rotationSteps[rotationSteps.Count - 1].Split('_')[0];
         //List<CubeUnit> cubesFromThePast = new List<CubeUnit>();
         string[] cubeIDs = cubeData.Split('.');
         for (int i = 0; i< cubeIDs.Length; i++)
@@ -245,11 +284,42 @@ public class CubeManager : MonoBehaviour
             newCube.transform.SetParent(rotator, true);
         }
         
-        Rotate(GetReverseDirection(parsed_enum));
+        Rotate(GetReverseDirection(parsed_enum),true);
 
 
-        recordedSteps.RemoveAt(recordedSteps.Count - 1);
+        rotationSteps.RemoveAt(rotationSteps.Count - 1);
     }
+
+
+    //Does a specified step
+    //public void Redo() {
+
+    //    rotating = true;
+    //    //Grab Cube ID
+    //    string directionData = rotationSteps[rotationSteps.Count - 1].Split('_')[1];
+
+
+
+
+    //    //Get Rotation Direction
+    //    Globals.CubeRotationDirection parsed_enum = (Globals.CubeRotationDirection)System.Enum.Parse(typeof(Globals.CubeRotationDirection), directionData);
+
+    //    string cubeData = rotationSteps[rotationSteps.Count - 1].Split('_')[0];
+    //    //List<CubeUnit> cubesFromThePast = new List<CubeUnit>();
+    //    string[] cubeIDs = cubeData.Split('.');
+    //    for (int i = 0; i < cubeIDs.Length; i++)
+    //    {
+    //        CubeUnit newCube = currentMagicCube.allCubeUnits[int.Parse(cubeIDs[i])];
+    //        detectedCubes.Add(newCube);
+    //        newCube.transform.SetParent(rotator, true);
+    //    }
+
+    //    Rotate(GetReverseDirection(parsed_enum));
+
+
+    //    rotationSteps.RemoveAt(rotationSteps.Count - 1);
+    //}
+
 
     void OnSwipeRotate(Globals.CubeRotationDirection direction, CubePlane plane) {
 
@@ -266,32 +336,83 @@ public class CubeManager : MonoBehaviour
         }
 
         //Rotate the Rotator
-        Rotate(direction);
+        Rotate(direction,true);
     }
 
 
 
-    public void Rotate(Globals.CubeRotationDirection direction)
+    public void Rotate(Globals.CubeRotationDirection direction, bool async)
     {
+        Quaternion targetRotation = new Quaternion();
+
+        //Calculate as per direction
         if (direction == Globals.CubeRotationDirection.left)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
+        }
         else if (direction == Globals.CubeRotationDirection.right)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
+        }
 
         else if (direction == Globals.CubeRotationDirection.upLeft)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
+        }
         else if (direction == Globals.CubeRotationDirection.downRight)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
-
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
+        }
         else if (direction == Globals.CubeRotationDirection.downLeft)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+        }
         else if (direction == Globals.CubeRotationDirection.upRight)
-            StartCoroutine(RotationBehaviour(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+        {
+            targetRotation = transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier);
+            //StartCoroutine(RotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+        }
 
+
+        //Rotate in Async manner
+        if (async) {
+            StartCoroutine(RotationBehaviourAsync(targetRotation));
+        }
+        //Rotate in sync manner
+        else{
+            RotationBehaviour(targetRotation);
+        }
     }
 
 
-    IEnumerator RotationBehaviour(Quaternion targetRotation)
+    void RotationBehaviour(Quaternion targetRotation) {
+
+        rotator.rotation = targetRotation;
+
+        for (int i = 0; i < detectedCubes.Count; i++)
+        {
+            detectedCubes[i].transform.SetParent(currentMagicCube.transform, true);
+        }
+
+
+        //Reset Rotator Rotation to zero
+        rotator.rotation = Quaternion.Euler(0, 0, 0);
+        isTopFaceSelected = false;
+        ToggleAllPlanes(false);
+        ClearAllPlanesData();
+        selectedCubeUnit = null;
+
+        detectedCubes.Clear();
+        Debug.LogError("Finish");
+        rotating = false;
+    }
+
+    IEnumerator RotationBehaviourAsync(Quaternion targetRotation)
     {
         float timeElapsed = 0;
         Quaternion startRotation = transform.rotation;
@@ -300,6 +421,7 @@ public class CubeManager : MonoBehaviour
         {
             rotator.rotation = Quaternion.Slerp(startRotation, targetRotation, timeElapsed / lerpDuration);
             timeElapsed += Time.deltaTime;
+
             yield return null;
         }
 
@@ -416,7 +538,7 @@ public class CubeManager : MonoBehaviour
 
         Debug.LogError("Record Entry = " + value);
 
-        recordedSteps.Add(value);
+        rotationSteps.Add(value);
     }
 
     public void ToggleAllPlanes(bool flag)
