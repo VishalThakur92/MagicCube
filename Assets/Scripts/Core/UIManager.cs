@@ -27,8 +27,15 @@ public class UIManager : MonoBehaviour
 
     //Set the Canvas ScreenOverlay Camera
     public void SetCanvasCamera(Camera camera) {
+        canvas.renderMode = RenderMode.ScreenSpaceCamera;
         canvas.worldCamera = camera;
         camera.gameObject.SetActive(true);
+    }
+
+    public void OnFinish()
+    {
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.worldCamera.gameObject.SetActive(false);
     }
     #endregion
 }

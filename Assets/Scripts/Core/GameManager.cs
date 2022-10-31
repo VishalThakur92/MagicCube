@@ -7,9 +7,6 @@ public class GameManager : MonoBehaviour
     #region Parameters
     //Singelton Instance
     public static GameManager Instance { get; private set; }
-    //Currently Selected Magic Cube's type
-    [SerializeField]
-    Globals.CubeType currentMagicCubeType;
 
     #endregion
 
@@ -30,14 +27,30 @@ public class GameManager : MonoBehaviour
     void StartGame(Globals.CubeType type)
     {
         //set the specified Cube type
-        currentMagicCubeType = type;
-        CubeManager.Instance.Initialize(currentMagicCubeType);
+        CubeManager.Instance.Initialize(type);
 
+        //Set Canvas Camera as per the selected respective cube
         UIManager.Instance.SetCanvasCamera(CubeManager.Instance.currentMagicCube.respectiveCamera);
     }
 
+
+    //Start the game with the Specified Cube type
     public void StartGame(int cubeType) {
         StartGame((Globals.CubeType)cubeType);
+    }
+
+    //Exit current Game and goto main menu
+    public void ExitGame() {
+        //OnFinish behaviour for UIManager
+        UIManager.Instance.OnFinish();
+
+        //OnFinish behaviour for CubeManager
+        CubeManager.Instance.OnFinish();
+    }
+
+    //Save game
+    public void SaveGame() {
+
     }
     #endregion
 

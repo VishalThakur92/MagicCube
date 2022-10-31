@@ -18,6 +18,15 @@ public class InputManager : MonoBehaviour
     void Update()
     {
         DetectSwipe();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            Globals.OnPointerDown?.Invoke();
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            Globals.OnPointerUp?.Invoke();
+        }
     }
 
     //Current Swipe Direction
@@ -134,7 +143,7 @@ public class InputManager : MonoBehaviour
                     //return;
                 }
 
-                Globals.OnSwipe.Invoke(swipeDirection, true);
+                Globals.OnSwipe?.Invoke(swipeDirection, true);
             }
 
         }

@@ -84,9 +84,6 @@ public class CubeManager : MonoBehaviour
 
         //Calculate Screen Width's half
         screenhalf = Screen.width/2;
-
-        //Subscribe to Event Brodcasts
-        Globals.OnSwipe += OnSwipe;
     }
 
 
@@ -99,6 +96,12 @@ public class CubeManager : MonoBehaviour
 
         //Enable the currently selected Magic Cube type
         currentMagicCube.gameObject.SetActive(true);
+
+        //Subscribe to Event Brodcasts
+        Globals.OnSwipe += OnSwipe;
+        Globals.OnPointerDown += OnTryGrabCubeUnit;
+        Globals.OnPointerUp += OnPointerUp;
+
     }
 
 
@@ -168,6 +171,8 @@ public class CubeManager : MonoBehaviour
 
     Vector3 DebugRaydirection;
 
+
+    //Controls for Editor testing
     public void Update()
     {
         if(selectedCubeUnit)
@@ -176,14 +181,6 @@ public class CubeManager : MonoBehaviour
         if (rotating)
             return;
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            StartCoroutine(GrabSelectedCubeUnit());
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            ToggleAllPlanes(false);
-        }
 
         if (Input.GetKeyUp(KeyCode.Space))
             Undo();
@@ -192,43 +189,34 @@ public class CubeManager : MonoBehaviour
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.right,true);
         }
-
-        if (Input.GetKeyUp(KeyCode.A))
+        else if (Input.GetKeyUp(KeyCode.A))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.left, true);
         }
-
-        if (Input.GetKeyUp(KeyCode.W))
+        else if (Input.GetKeyUp(KeyCode.W))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.up, true);
         }
-        if (Input.GetKeyUp(KeyCode.S))
+        else if (Input.GetKeyUp(KeyCode.S))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.down, true);
         }
-
-        if (Input.GetKeyUp(KeyCode.Q))
+        else if (Input.GetKeyUp(KeyCode.Q))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft, true);
         }
-
-        if (Input.GetKeyUp(KeyCode.E))
+        else if (Input.GetKeyUp(KeyCode.E))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight, true);
         }
-
-        if (Input.GetKeyUp(KeyCode.Z))
+        else if (Input.GetKeyUp(KeyCode.Z))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft, true);
         }
-
-        if (Input.GetKeyUp(KeyCode.C))
+        else if (Input.GetKeyUp(KeyCode.C))
         {
             Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
         }
-
-        //if (Input.GetKeyUp(KeyCode.S))
-        //    Rotate(Vector3.down);
 
     }
 
@@ -444,6 +432,25 @@ public class CubeManager : MonoBehaviour
         verticalPlaneLeft.Clear();
         verticalPlaneRight.Clear();
     }
+
+
+    public void OnFinish() {
+        currentMagicCube.gameObject.SetActive(false);
+        currentMagicCube = null;
+
+        //UnSubscribe to Event Brodcasts
+        Globals.OnSwipe -= OnSwipe;
+        Globals.OnPointerDown -= OnTryGrabCubeUnit;
+        Globals.OnPointerUp -= OnPointerUp;
+    }
+
+    void OnTryGrabCubeUnit() {
+        StartCoroutine(GrabSelectedCubeUnit());
+    }
+
+    void OnPointerUp() {
+        ToggleAllPlanes(false);
+    }
     #endregion
 
 
@@ -488,110 +495,4 @@ public class CubeManager : MonoBehaviour
     #endregion
 
 
-
-    #region Deprecated Methods
-    //IEnumerator RotateLeft()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //        //yield return null;
-    //    }
-    //    yield return null;
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.left);
-    //}
-
-    //IEnumerator RotateRight()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.horizontalPlane.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //    }
-    //    yield return null;
-
-    //    //selectedCubeUnit.horizontalPlane.Clear();
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.right);
-    //}
-
-    //IEnumerator RotateUpLeft()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //    }
-    //    yield return null;
-
-    //    //selectedCubeUnit.verticalPlaneRight.Clear();
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.upLeft);
-    //}
-
-    //IEnumerator RotateUpRight()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //    }
-    //    yield return null;
-
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.upRight);
-    //}
-
-    //IEnumerator RotateDownRight()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneRight.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //    }
-
-    //    yield return null;
-    //    //selectedCubeUnit.verticalPlaneRight.Clear();
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.downRight);
-    //}
-
-    //IEnumerator RotateDownLeft()
-    //{
-    //    //Grab all Horizontal Cube units
-    //    detectedCubes.AddRange(selectedCubeUnit.verticalPlaneLeft.detectedCubes);
-
-    //    //Set Rotator as their parent
-    //    for (int i = 0; i < detectedCubes.Count; i++)
-    //    {
-    //        detectedCubes[i].transform.SetParent(rotator, true);
-    //    }
-    //    yield return null;
-
-    //    //Rotate the Rotator
-    //    Rotate(CubeRotationDirection.downLeft);
-    //}
-    #endregion
 }

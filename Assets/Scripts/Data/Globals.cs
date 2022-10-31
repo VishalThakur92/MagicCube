@@ -46,6 +46,13 @@ public static class Globals
 
     #region Events
     //Invoked when a user does a swipe
-    public static Action<SwipeDirection,bool> OnSwipe;
+    public static Action<SwipeDirection, bool> OnSwipe;
+
+    //Invoked when a user taps down on scren
+    public static Action OnPointerDown;
+
+    //Invoked when a user lifts the taps from the scren
+    public static Action OnPointerUp;
+
     #endregion
 }
