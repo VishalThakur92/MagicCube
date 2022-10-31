@@ -7,9 +7,6 @@ public class GameManager : MonoBehaviour
     #region Parameters
     //Singelton Instance
     public static GameManager Instance { get; private set; }
-
-    //[SerializeField]
-    //TextAsset savedData;
     #endregion
 
 
@@ -25,7 +22,7 @@ public class GameManager : MonoBehaviour
     }
 
 
-     void Start()
+    void Start()
     {
         if (!DoesSaveGameExist())
         {
@@ -45,7 +42,7 @@ public class GameManager : MonoBehaviour
         CubeManager.Instance.Initialize(type);
 
         //Set Canvas Camera as per the selected respective cube
-        UIManager.Instance.SetCanvasCamera(CubeManager.Instance.currentMagicCube.respectiveCamera);
+        UIManager.Instance.SetCanvasCamera(CubeManager.Instance.currentMagicCubeCamera);
 
     }
 

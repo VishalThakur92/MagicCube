@@ -12,6 +12,13 @@ public class CubeManager : MonoBehaviour
     //The Currently selected Magic Cube
     public MagicCube currentMagicCube;
 
+    //The Currently selected Magic Cube's Render Camera
+    public Camera currentMagicCubeCamera;
+
+    //Selected Magic Cube's prefab is instantiated as child of this obj
+    [SerializeField]
+    Transform magicCubeParent, magicCubeCameraParent;
+
     [SerializeField]
     List<MagicCube> allMagicCubes = new List<MagicCube>();
 
@@ -88,21 +95,20 @@ public class CubeManager : MonoBehaviour
 
 
     public void Initialize(Globals.CubeType cubeType) {
-        //Disable all magic Cubes
-        for (int i = 0; i < allMagicCubes.Count; i++)
-            allMagicCubes[i].gameObject.SetActive(false);
 
-        currentMagicCube = allMagicCubes[(int)cubeType];
+        currentMagicCube = Instantiate(allMagicCubes[(int)cubeType] , magicCubeParent);
 
-        //Enable the currently selected Magic Cube type
-        currentMagicCube.gameObject.SetActive(true);
+        currentMagicCubeCamera = Instantiate(allMagicCubes[(int)cubeType].respectiveCamera, magicCubeCameraParent);
 
+        //currentMagicCube = newMagicCube;
 
+        //Apply rotations if alrady there, this is used when we Load a saved game
         if (rotationSteps.Count > 0)
         {
             ApplyAllRotationSteps();
         }
-        else {
+        else//Fresh new Game
+        {
             SubsribeToInputEvents();
         }
     }
@@ -178,6 +184,7 @@ public class CubeManager : MonoBehaviour
                 detectedCubes.Clear();
                 Debug.LogError(hit.transform.name);
                 detectorPlanes.position = selectedCubeUnit.transform.position;
+                ClearAllPlanesData();
                 yield return null;
                 ToggleAllPlanes(true);
                 mousePositionXOnInput = Input.mousePosition.x;
@@ -188,6 +195,8 @@ public class CubeManager : MonoBehaviour
                 LayerMask ignoreLayers = 1 << 3;
 
                 yield return new WaitForEndOfFrame();
+
+                //Check if the selected Cube is in the TOP face of the MAGIC Cube
                 if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 100f, ignoreLayers))
                 {
                     Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
@@ -556,9 +565,13 @@ public class CubeManager : MonoBehaviour
     }
 
 
-    public void OnFinish() {
-        currentMagicCube.gameObject.SetActive(false);
-        currentMagicCube = null;
+    public void OnFinish()
+    {
+        Destroy(currentMagicCube.gameObject);
+        Destroy(currentMagicCubeCamera.gameObject);
+
+        rotationSteps.Clear();
+
 
         //UnSubscribe to Event Brodcasts
         Globals.OnSwipe -= OnSwipe;
