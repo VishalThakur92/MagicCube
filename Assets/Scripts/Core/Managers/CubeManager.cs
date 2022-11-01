@@ -36,7 +36,7 @@ namespace MagicCubeVishal
 
         //Time it takes make on Magic cube's Side rotation
         [SerializeField]
-        float lerpDuration = 5f;
+        float lerpDuration = 5f, magicCubeRotationLerpDuration = 1;
 
         //Magic Cube's Side is rotated by this Parameter
         [SerializeField]
@@ -308,6 +308,7 @@ namespace MagicCubeVishal
 
         IEnumerator GrabSelectedCubeUnit()
         {
+            mousePositionXOnInput = Input.mousePosition.x;
             Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
@@ -322,7 +323,6 @@ namespace MagicCubeVishal
                     ClearAllPlanesData();
                     yield return null;
                     ToggleAllPlanes(true);
-                    mousePositionXOnInput = Input.mousePosition.x;
 
 
                     DebugRaydirection = hit.normal;
@@ -496,6 +496,7 @@ namespace MagicCubeVishal
 
             rotator.rotation = targetRotation;
             yield return new WaitForEndOfFrame();
+
             //Put Detected Cubes back into Rubik Cube from Rotator
             for (int i = 0; i < detectedCubes.Count; i++)
             {
@@ -514,6 +515,36 @@ namespace MagicCubeVishal
             rotating = false;
         }
 
+
+
+        IEnumerator MagicCubeRotationBehaviourAsync(Quaternion targetRotation)
+        {
+            //put Current magic Cube inside Rotator
+            currentMagicCube.transform.SetParent(rotator.transform, true);
+
+            float timeElapsed = 0;
+            Quaternion startRotation = transform.localRotation;
+
+
+            while (timeElapsed < magicCubeRotationLerpDuration)
+            {
+                rotator.localRotation = Quaternion.Slerp(rotator.localRotation, targetRotation, timeElapsed / magicCubeRotationLerpDuration);
+                timeElapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            //Iron out any missed values
+            rotator.rotation = targetRotation;
+            yield return new WaitForEndOfFrame();
+            //put Current magic Cube back to magicCubeParent
+            currentMagicCube.transform.SetParent(magicCubeParent, true);
+
+            //Iron out any missed values
+            rotator.rotation = Quaternion.Euler(0, 0, 0);
+
+            yield return new WaitForEndOfFrame();
+            rotating = false;
+        }
 
 
         void RecordCubeRotation(List<CubeUnit> cubes, Globals.CubeRotationDirection direction)
@@ -563,27 +594,86 @@ namespace MagicCubeVishal
             if (rotating)
                 return;
 
+            rotating = true;
+
             if (selectedCubeUnit == null)
             {
-                //Rotate Camera as per Swipe
+                //Rotate Magic Cube as per Swipe
+                switch (direction)
+                {
+                    case Globals.SwipeDirection.up:
+                        //if mouse pos to left of screen rotate from DownLeft to Top Right
+                        if (isInputPosXInLeftScreen())
+                        {
+                            StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+                        }
+                        //if mouse pos to right of screen rotate from down right to Top left
+                        else
+                        {
+                            StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
+                        }
+                        break;
+
+
+                    case Globals.SwipeDirection.left:
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, rotationMulitplier, 0)));
+                        break;
+                    case Globals.SwipeDirection.right:
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, -rotationMulitplier, 0)));
+                        break;
+
+
+                    case Globals.SwipeDirection.down:
+                        //if mouse pos to left of screen rotate from Top Right to DownLeft
+                        if (isInputPosXInLeftScreen())
+                        {
+                            StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+                        }
+                        //if mouse pos to right of screen rotate from Top left to down right 
+                        else
+                        {
+                            StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
+                        }
+                        break;
+
+
+                    case Globals.SwipeDirection.upLeft:
+                        //Rotate Cube Down from DownRight to UpLeft
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(-rotationMulitplier, 0, 0)));
+                        break;
+
+                    case Globals.SwipeDirection.upRight:
+                        //Rotate Cube Down from Downleft to UpRight
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, rotationMulitplier)));
+                        break;
+
+                    case Globals.SwipeDirection.downLeft:
+                        //Rotate Cube Down from upRight to downLeft
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(0, 0, -rotationMulitplier)));
+                        break;
+
+                    case Globals.SwipeDirection.downRight:
+                        //Rotate Cube Down from upleft to downRight
+                        StartCoroutine(MagicCubeRotationBehaviourAsync(transform.rotation * Quaternion.Euler(rotationMulitplier, 0, 0)));
+                        break;
+                }
+                //We just wanted to rotate the Magic Cube not it's Row/Column
                 return;
             }
 
 
-            rotating = true;
-
-            //Rotate Cube as per Swipe
+            //Rotate Magic Cube's Row/Coulumn as per Swipe
             switch (direction)
             {
                 case Globals.SwipeDirection.up:
-                    if (isCubePlacedInLeftScreen())
+                    if (isInputPosXInLeftScreen())
                         OnSwipeRotate(Globals.CubeRotationDirection.upRight, planeZ);
                     else
                         OnSwipeRotate(Globals.CubeRotationDirection.upLeft, planeX);
                     break;
 
                 case Globals.SwipeDirection.down:
-                    if (isCubePlacedInLeftScreen())
+                    if (isInputPosXInLeftScreen())
                         OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     else
                         OnSwipeRotate(Globals.CubeRotationDirection.downRight, planeX);
@@ -613,8 +703,6 @@ namespace MagicCubeVishal
                     OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     break;
             }
-
-            //latestSwipeDirection = swipeDirection;
         }
 
 
@@ -650,7 +738,7 @@ namespace MagicCubeVishal
 
 
         #region utility
-        bool isCubePlacedInLeftScreen()
+        bool isInputPosXInLeftScreen()
         {
             if (mousePositionXOnInput > screenhalf)
                 return false;
