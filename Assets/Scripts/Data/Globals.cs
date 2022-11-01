@@ -47,8 +47,9 @@ namespace MagicCubeVishal
 
 
         #region Parameters
-        public static int MinimumShuffleSteps = 5;
+        public static int MinimumShuffleSteps = 15;
         public static int MaximumShuffleSteps = 20;
+        public static float secondsToWaitBeforeShuffle = .5f;
         #endregion
 
 

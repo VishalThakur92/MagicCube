@@ -9,13 +9,6 @@ namespace MagicCubeVishal
         //Singelton Instance
         public static CubeManager Instance { get; private set; }
 
-        //The Currently selected Magic Cube
-        [HideInInspector]
-        public MagicCube currentMagicCube;
-
-        //The Currently selected Magic Cube's Render Camera
-        [HideInInspector]
-        public Camera currentMagicCubeCamera;
 
         //Selected Magic Cube's prefab is instantiated as child of this obj
         [SerializeField]
@@ -24,13 +17,8 @@ namespace MagicCubeVishal
         [SerializeField]
         List<MagicCube> allMagicCubes = new List<MagicCube>();
 
-        //The Steps being Recorded with every Cube move
-        [HideInInspector]
-        public List<string> rotationSteps = new List<string>();
 
 
-        //Selected Magic Cube's Individual Cube Unit
-        CubeUnit selectedCubeUnit;
 
 
         [Space(10)]
@@ -67,10 +55,25 @@ namespace MagicCubeVishal
 
 
         //Detector planes are used to Grab all corressponding cubes in the specified Input Direction
-        [Space(10), SerializeField]
+        [SerializeField]
         Transform detectorPlanesParent;
         [SerializeField]
         public CubePlane planeY, planeZ, planeX;
+
+        [Header("Debug Only, Donot Edit")]
+        [Space(10)]
+        [SerializeField]
+        //Selected Magic Cube's Individual Cube Unit
+        CubeUnit selectedCubeUnit;
+        //The Steps being Recorded with every Cube move
+
+        [SerializeField]
+        public List<string> rotationSteps = new List<string>();
+        //The Currently selected Magic Cube
+        public MagicCube currentMagicCube;
+
+        //The Currently selected Magic Cube's Render Camera
+        public Camera currentMagicCubeCamera;
         #endregion
 
 
@@ -152,8 +155,8 @@ namespace MagicCubeVishal
         }
         #endregion
 
+        #region Unity
 
-        #region Methods
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -173,15 +176,18 @@ namespace MagicCubeVishal
             screenhalf = Screen.width / 2;
         }
 
+        #endregion
 
+
+        #region Core
+        //Initialize with a specified Cube Type
         public void Initialize(Globals.CubeType cubeType)
         {
-
+            //Load and instantitate specified Cube prefab
             currentMagicCube = Instantiate(allMagicCubes[(int)cubeType], magicCubeParent);
 
+            //Load and instantitate specified Cube's Camera
             currentMagicCubeCamera = Instantiate(allMagicCubes[(int)cubeType].respectiveCamera, magicCubeCameraParent);
-
-            //currentMagicCube = newMagicCube;
 
             //Apply rotations if alrady there, this is used when we Load a saved game
             if (rotationSteps.Count > 0)
@@ -190,7 +196,7 @@ namespace MagicCubeVishal
             }
             else//Fresh new Game
             {
-                SubsribeToEvents();
+                Shuffle();
             }
         }
 
@@ -217,6 +223,12 @@ namespace MagicCubeVishal
 
         //Shuffle the Current Magic Cube Randomly
         IEnumerator ShuffleBehaviour() {
+            //Unsubscribe from Input Events as we donot want to take user input while SHUFFLE in progress
+            UnSubsribeFromEvents();
+
+            //Wait for x seconds before shuffling
+            yield return new WaitForSeconds(Globals.secondsToWaitBeforeShuffle);
+
             //total number of shuffle steps - RANOM
             int shuffleSteps = Random.Range(Globals.MinimumShuffleSteps , Globals.MaximumShuffleSteps);
             Debug.LogError($"Will Rotate for {shuffleSteps} steps");
@@ -254,6 +266,10 @@ namespace MagicCubeVishal
 
             //Clear Rotation Steps as we dont want the user to keep pressing UNDO and setting the Cube to Solved state
             rotationSteps.Clear();
+
+
+            //Shuffle Complete, Now we want the user to be able to give inputs to rotate the Cube
+            SubsribeToEvents();
         }
 
 
@@ -292,7 +308,7 @@ namespace MagicCubeVishal
         IEnumerator GrabSelectedCubeUnit()
         {
             Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, 100))
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
             {
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
 
@@ -315,7 +331,7 @@ namespace MagicCubeVishal
                     yield return new WaitForEndOfFrame();
 
                     //Check if the selected Cube is in the TOP face of the MAGIC Cube
-                    if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, 100f, ignoreLayers))
+                    if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, Mathf.Infinity, ignoreLayers))
                     {
                         Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
                         if (hit2.transform.gameObject.layer == 3)
