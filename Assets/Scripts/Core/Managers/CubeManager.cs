@@ -117,40 +117,40 @@ namespace MagicCubeVishal
 
             if (Input.GetKeyUp(KeyCode.D))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.right, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.right, true);
             }
             else if (Input.GetKeyUp(KeyCode.A))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.left, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.left, true);
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.up, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.up, true);
             }
             else if (Input.GetKeyUp(KeyCode.S))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.down, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.down, true);
             }
             else if (Input.GetKeyUp(KeyCode.Q))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upLeft, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.upLeft, true);
             }
             else if (Input.GetKeyUp(KeyCode.E))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.upRight, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.upRight, true);
             }
             else if (Input.GetKeyUp(KeyCode.Z))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downLeft, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.downLeft, true);
             }
             else if (Input.GetKeyUp(KeyCode.C))
             {
-                Globals.OnSwipe.Invoke(Globals.SwipeDirection.downRight, true);
+                Globals.OnSwipe?.Invoke(Globals.SwipeDirection.downRight, true);
             }
-            else if (Input.GetKeyUp(KeyCode.P))
-            {
-                Shuffle();
-            }
+            //else if (Input.GetKeyUp(KeyCode.P))
+            //{
+            //    Shuffle();
+            //}
 
         }
         #endregion
@@ -183,6 +183,7 @@ namespace MagicCubeVishal
         //Initialize with a specified Cube Type
         public void Initialize(Globals.CubeType cubeType)
         {
+            UnSubsribeFromEvents();
             //Load and instantitate specified Cube prefab
             currentMagicCube = Instantiate(allMagicCubes[(int)cubeType], magicCubeParent);
 
@@ -197,7 +198,6 @@ namespace MagicCubeVishal
             else//Fresh new Game
             {
                 Shuffle();
-                //SubsribeToEvents();
             }
         }
 
@@ -212,9 +212,9 @@ namespace MagicCubeVishal
         void UnSubsribeFromEvents()
         {
             //Subscribe to Event Brodcasts
-            Globals.OnSwipe += OnSwipe;
-            Globals.OnPointerDown += OnTryGrabCubeUnit;
-            Globals.OnPointerUp += OnPointerUp;
+            Globals.OnSwipe -= OnSwipe;
+            Globals.OnPointerDown -= OnTryGrabCubeUnit;
+            Globals.OnPointerUp -= OnPointerUp;
         }
 
         void Shuffle() {
@@ -274,6 +274,7 @@ namespace MagicCubeVishal
         }
 
 
+        //Applies All Rotation steps in the rotationSteps List
         void ApplyAllRotationSteps()
         {
             rotating = true;
@@ -565,7 +566,7 @@ namespace MagicCubeVishal
             value += "_" + System.Enum.GetName(typeof(Globals.CubeRotationDirection), direction);
 
 
-            Debug.LogError("Record Entry = " + value);
+            //Debug.LogError("Record Entry = " + value);
 
             rotationSteps.Add(value);
         }
@@ -589,6 +590,8 @@ namespace MagicCubeVishal
         #region Callbacks
         void OnSwipe(Globals.SwipeDirection direction, bool isActualSwipe)
         {
+            if(isActualSwipe)
+                Debug.LogError($"OnSwipe {direction}");
             //swipeDirection = direction;
             //avoid multiple inputs
             if (rotating)
