@@ -18,7 +18,7 @@ namespace MagicCubeVishal
 
 
         //Pinch in/out related params
-        float TouchZoomSpeed = 0.1f;
+        float TouchZoomSpeed = 0.001f;
         #endregion
 
 
@@ -90,6 +90,8 @@ namespace MagicCubeVishal
 
                     // get offset value
                     float deltaDistance = oldTouchDistance - currentTouchDistance;
+
+                    //Broadcast Event
                     Globals.OnPinchInOut.Invoke(deltaDistance, TouchZoomSpeed);
                 }
             }
