@@ -352,7 +352,8 @@ namespace MagicCubeVishal
             }
             else
             {
-                // selectedCubeUnit = null;
+                //No Cube unit was grabbed
+                selectedCubeUnit = null;
             }
         }
 

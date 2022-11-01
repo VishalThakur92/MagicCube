@@ -5,13 +5,24 @@ namespace MagicCubeVishal
 {
     public class InputManager : MonoBehaviour
     {
+        #region Params
+        //Swipe related Params
         public float MinSwipeLength = 5;
         Vector2 _firstPressPos;
         Vector2 _secondPressPos;
         Vector2 _currentSwipe;
 
-        //public static Swipe SwipeDirection;
 
+        //Current Swipe Direction
+        Globals.SwipeDirection swipeDirection;
+
+
+        //Pinch in/out related params
+        float TouchZoomSpeed = 0.1f;
+        #endregion
+
+
+        #region Unity
         private void Start()
         {
             guiStyle.fontSize = 50; //change the font size
@@ -21,18 +32,11 @@ namespace MagicCubeVishal
         {
             DetectSwipe();
 
-            if (Input.GetMouseButtonDown(0))
-            {
-                Globals.OnPointerDown?.Invoke();
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-                Globals.OnPointerUp?.Invoke();
-            }
-        }
+            DetectPinchInOut();
 
-        //Current Swipe Direction
-        Globals.SwipeDirection swipeDirection;
+            DetectPointerUpDown();
+        }
+        #endregion
 
 
 
@@ -56,10 +60,45 @@ namespace MagicCubeVishal
             public static readonly Vector2 DownLeft = new Vector2(-1, -1);
         }
 
+        void DetectPointerUpDown() {
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                Globals.OnPointerDown?.Invoke();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                Globals.OnPointerUp?.Invoke();
+            }
+        }
+
+        void DetectPinchInOut() {
+            if (Input.touchSupported)
+            {
+                // Pinch to zoom
+                if (Input.touchCount == 2)
+                {
+                    // get current touch positions
+                    Touch tZero = Input.GetTouch(0);
+                    Touch tOne = Input.GetTouch(1);
+                    // get touch position from the previous frame
+                    Vector2 tZeroPrevious = tZero.position - tZero.deltaPosition;
+                    Vector2 tOnePrevious = tOne.position - tOne.deltaPosition;
+
+                    float oldTouchDistance = Vector2.Distance(tZeroPrevious, tOnePrevious);
+                    float currentTouchDistance = Vector2.Distance(tZero.position, tOne.position);
+
+                    // get offset value
+                    float deltaDistance = oldTouchDistance - currentTouchDistance;
+                    Globals.OnPinchInOut.Invoke(deltaDistance, TouchZoomSpeed);
+                }
+            }
+
+        }
 
         public void DetectSwipe()
         {
-            if (Input.touches.Length > 0)
+            if (Input.touches.Length == 1)
             {
                 Touch t = Input.GetTouch(0);
 

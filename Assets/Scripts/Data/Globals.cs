@@ -51,6 +51,9 @@ namespace MagicCubeVishal
         public static int MinimumShuffleSteps = 15;
         public static int MaximumShuffleSteps = 20;
         public static float secondsToWaitBeforeShuffle = .5f;
+
+
+        public static float MinZoomBound = .6f, MaxZoomBound =1.65f;
         #endregion
 
 
@@ -63,6 +66,9 @@ namespace MagicCubeVishal
 
         //Invoked when a user lifts the taps from the scren
         public static Action OnPointerUp;
+
+        //Invoked when a user lifts the taps from the scren
+        public static Action<float,float> OnPinchInOut;
 
         #endregion
     }
