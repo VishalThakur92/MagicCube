@@ -92,7 +92,7 @@ namespace MagicCubeVishal
             //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
             //}
 
-                GUILayout.Label($"rotating = {rotating}", guiStyle);
+                //GUILayout.Label($"rotating = {rotating}", guiStyle);
         }
 
 
@@ -197,6 +197,7 @@ namespace MagicCubeVishal
             else//Fresh new Game
             {
                 Shuffle();
+                //SubsribeToEvents();
             }
         }
 
@@ -231,7 +232,7 @@ namespace MagicCubeVishal
 
             //total number of shuffle steps - RANOM
             int shuffleSteps = Random.Range(Globals.MinimumShuffleSteps , Globals.MaximumShuffleSteps);
-            Debug.LogError($"Will Rotate for {shuffleSteps} steps");
+            //Debug.LogError($"Will Rotate for {shuffleSteps} steps");
             //CubeUnit randomCubeUnit;
             Globals.SwipeDirection randomSwipe;
             //Shuffle the magic Cube x times where, x = shuffleSteps
@@ -243,7 +244,7 @@ namespace MagicCubeVishal
                 //Select a random rotation
                 randomSwipe = (Globals.SwipeDirection)Random.Range(0, 8);
 
-                Debug.LogError($"Applying random rotation: {randomSwipe} on {selectedCubeUnit.name}");
+                //Debug.LogError($"Applying random rotation: {randomSwipe} on {selectedCubeUnit.name}");
 
                 detectedCubes.Clear();
                 detectorPlanesParent.position = selectedCubeUnit.transform.position;
@@ -483,11 +484,11 @@ namespace MagicCubeVishal
         IEnumerator RotationBehaviourAsync(Quaternion targetRotation)
         {
             float timeElapsed = 0;
-            Quaternion startRotation = transform.rotation;
+            Quaternion startRotation = transform.localRotation;
 
             while (timeElapsed < lerpDuration)
             {
-                rotator.rotation = Quaternion.Slerp(startRotation, targetRotation, timeElapsed / lerpDuration);
+                rotator.localRotation = Quaternion.Slerp(startRotation, targetRotation, timeElapsed / lerpDuration);
                 timeElapsed += Time.deltaTime;
 
                 yield return null;
@@ -509,7 +510,7 @@ namespace MagicCubeVishal
             selectedCubeUnit = null;
 
             detectedCubes.Clear();
-            Debug.LogError("Finish");
+            //Debug.LogError("Finish");
             rotating = false;
         }
 

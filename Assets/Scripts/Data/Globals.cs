@@ -47,6 +47,7 @@ namespace MagicCubeVishal
 
 
         #region Parameters
+        //Minimum and Maximum Shuffle Steps can be used to Lower/Increase the Game Difficulty
         public static int MinimumShuffleSteps = 15;
         public static int MaximumShuffleSteps = 20;
         public static float secondsToWaitBeforeShuffle = .5f;
