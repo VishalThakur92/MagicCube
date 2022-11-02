@@ -36,9 +36,9 @@ namespace MagicCubeVishal {
             //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
             //}
 
-            GUILayout.Label($"Ortho size = {cam.orthographicSize}", guiStyle);
+            //GUILayout.Label($"Ortho size = {cam.orthographicSize}", guiStyle);
 
-            GUILayout.Label($"deltaMagnitudeDiff = {deltaMagDiff} speed = {sped}", guiStyle);
+            //GUILayout.Label($"deltaMagnitudeDiff = {deltaMagDiff} speed = {sped}", guiStyle);
 
 
         }
