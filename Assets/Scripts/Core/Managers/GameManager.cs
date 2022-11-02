@@ -194,10 +194,10 @@ namespace MagicCubeVishal
             }
         }
 
-        private void OnApplicationQuit()
-        {
-            SaveGame();
-        }
+        //private void OnApplicationQuit()
+        //{
+        //    SaveGame();
+        //}
 
         public void AcknowledgeOnCubeSolved() {
             //Reset Cube Manager
