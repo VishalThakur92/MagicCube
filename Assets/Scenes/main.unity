@@ -3530,8 +3530,8 @@ MonoBehaviour:
   - {fileID: 7670135036463826125, guid: bf3ad08bef3ca4738886f17b7f1df87c, type: 3}
   - {fileID: 7670135036463826125, guid: 46879c0cde37447c39a3b977f59ee7a4, type: 3}
   - {fileID: 7670135036463826125, guid: c898ce399728743ac9215107689a8cea, type: 3}
-  - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
-  - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
+  - {fileID: 7670135036463826125, guid: 74e7c66cc7d4b49d78f903857fec0a1e, type: 3}
+  - {fileID: 7670135036463826125, guid: 298001d97833d4fc28dfa6a6276ed3be, type: 3}
   rotator: {fileID: 1300167240}
   rotating: 0
   isTopFaceSelected: 0
