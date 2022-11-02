@@ -78,7 +78,7 @@ namespace MagicCubeVishal
 
 
         //Game Related Params
-        public static string gameOverMessage = "Well Done!! You solved the Magic Cube!! \n Time Taken :  ";
+        public static string gameOverMessage = "Well Done.You solved the Magic Cube!! \n Time Taken :  ";
         #endregion
 
 
