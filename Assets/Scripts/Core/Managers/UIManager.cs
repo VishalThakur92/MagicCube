@@ -23,6 +23,14 @@ namespace MagicCubeVishal
         //UI Menus
         [SerializeField]
         public GameObject gameCompleteMenu, HUDMenu;
+
+
+        //Game TIMER Text
+        public Text gameTimerText;
+
+
+        //Text shown on game Complete
+        public Text gameCompleteMessageText;
         #endregion
 
 

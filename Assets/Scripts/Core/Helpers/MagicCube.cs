@@ -34,6 +34,17 @@ namespace MagicCubeVishal
             //IsSolved();
         }
 
+        //Keep Rotating this magic Cube
+        public void RotateCrazy() {
+            StartCoroutine(RotateCrazyBehaviour());
+        }
+
+        IEnumerator RotateCrazyBehaviour() {
+            while (true) {
+                transform.Rotate(0, 6.0f * Globals.magicCubeCrazyRotationMultiplier * Time.deltaTime, 0);
+                yield return null;
+            }
+        }
 
         public IEnumerator IsSolvedBehaviour()
         {

@@ -306,7 +306,8 @@ namespace MagicCubeVishal
             //Shuffle Complete, Now we want the user to be able to give inputs to rotate the Cube
             SubsribeToEvents();
 
-            //Enable Cube Solved Detectors
+            //BroadCast ShuffleComplete Event
+            Globals.OnCubeShuffleComplete.Invoke();
 
         }
 
@@ -353,7 +354,7 @@ namespace MagicCubeVishal
             
             if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.UseGlobal))
             {
-                //Debug.LogError(hit.transform.name);
+                Debug.LogError(hit.transform.name);
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
 
                 if (selectedCubeUnit != null)

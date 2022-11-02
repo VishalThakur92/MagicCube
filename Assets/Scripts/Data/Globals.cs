@@ -58,19 +58,33 @@ namespace MagicCubeVishal
 
 
         #region Parameters
+
+        //------CubeManager params
         //Minimum and Maximum Shuffle Steps can be used to Lower/Increase the Game Difficulty
         public static int MinimumShuffleSteps = 1;
         public static int MaximumShuffleSteps = 2;
         public static float secondsToWaitBeforeShuffle = .5f;
+        public static int magicCubeCrazyRotationMultiplier = 20;
 
 
+
+
+        //------Camera Related Params
         public static float MinZoomBound = .6f, MaxZoomBound =1.65f;
+
+
+
+        //Game Related Params
+        public static string gameOverMessage = "Well Done!! You solved the Magic Cube!! \n Time Taken :  ";
         #endregion
 
 
         #region Events
 
         //-----Game Events---------
+        //Invoked when a Magic Cube's shuffling is Completed
+        public static Action OnCubeShuffleComplete;
+
         //Invoked when a user solves the selected Magic Cube
         public static Action OnCubeSolved;
 

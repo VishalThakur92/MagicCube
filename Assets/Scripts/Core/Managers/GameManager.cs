@@ -10,10 +10,14 @@ namespace MagicCubeVishal
         #region Parameters
         //Singelton Instance
         public static GameManager Instance { get; private set; }
+
+        //Seconds taken to solve a Magic Cube in a respective session
+        float secondsTaken = 0;
+        string gameTimeFormatted;
         #endregion
 
 
-        #region Methods
+        #region Unity
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -47,14 +51,18 @@ namespace MagicCubeVishal
         {
             UnSubscribeEvents();
         }
+        #endregion
 
+        #region Core
         void SubscribeEvents()
         {
             Globals.OnCubeSolved += OnCubeSolved;
+            Globals.OnCubeShuffleComplete += OnCubeShuffleComplete;
         }
         void UnSubscribeEvents()
         {
             Globals.OnCubeSolved -= OnCubeSolved;
+            Globals.OnCubeShuffleComplete -= OnCubeShuffleComplete;
         }
 
 
@@ -180,18 +188,74 @@ namespace MagicCubeVishal
             }
         }
 
+        public void AcknowledgeOnCubeSolved() {
+            //Reset Cube Manager
+            CubeManager.Instance.Reset();
+
+            //Reset Timer Text
+            UIManager.Instance.gameTimerText.text = "00:00";
+        }
+
+
+        public void StartGameTimer()
+        {
+            StartCoroutine(GameTimerBehaviour());
+        }
+
+        public void StopGameTimer()
+        {
+            StopAllCoroutines();
+            //StopCoroutine(GameTimerBehaviour());
+        }
+
+        IEnumerator GameTimerBehaviour() {
+            secondsTaken = 0;
+            string seconds = "--";
+            string minutes = "--";
+
+
+            while (true)
+            {
+                //Debug.LogError($"{secondsTaken}");
+                secondsTaken += Time.deltaTime;
+                minutes = Mathf.Floor(secondsTaken / 60).ToString("00");
+                seconds = (secondsTaken % 60).ToString("00");
+                gameTimeFormatted = string.Format("{0}:{1}", minutes, seconds);
+                //Show Time in the Text Component
+                UIManager.Instance.gameTimerText.text = gameTimeFormatted;
+
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
+        #endregion
+
+
+        #region Callbacks
+
         //Decide what Happens when a cube is solved
         void OnCubeSolved()
         {
             UIManager.Instance.HUDMenu.gameObject.SetActive(false);
             UIManager.Instance.gameCompleteMenu.gameObject.SetActive(true);
 
-            //On Win Behaviour - Keep the Cube Spinning
+            //Cube solved Stop the Game timer
+            StopGameTimer();
+
+
+
+
+            //Set Game Complete Message
+            UIManager.Instance.gameCompleteMessageText.text = Globals.gameOverMessage + gameTimeFormatted;
+
+            //On Win Behaviour - Keep the Cube Spinning Animation
+            CubeManager.Instance.currentMagicCube.RotateCrazy();
         }
 
-        public void AcknowledgeOnCubeSolved() {
-            //Reset Cube Manager
-            CubeManager.Instance.Reset();
+        //Decide what happens when magic Cube's Shuffling has been completed
+        void OnCubeShuffleComplete() {
+            //Start Game Timer
+            StartGameTimer();
         }
         #endregion
 
