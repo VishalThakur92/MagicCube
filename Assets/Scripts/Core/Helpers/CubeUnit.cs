@@ -6,6 +6,7 @@ namespace MagicCubeVishal
 {
     public class CubeUnit : MonoBehaviour
     {
+        //Unique ID of this Cube unit
         [SerializeField]
         public int uniqueID;
     }

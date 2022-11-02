@@ -58,7 +58,7 @@ namespace MagicCubeVishal
         [SerializeField]
         Transform detectorPlanesParent;
         [SerializeField]
-        public CubePlane planeY, planeZ, planeX;
+        public CubeUnitDetectorPlane planeY, planeZ, planeX;
 
         [Header("Debug Only, Donot Edit")]
         [Space(10)]
@@ -271,6 +271,9 @@ namespace MagicCubeVishal
 
             //Shuffle Complete, Now we want the user to be able to give inputs to rotate the Cube
             SubsribeToEvents();
+
+            //Enable Cube Solved Detectors
+
         }
 
 
@@ -389,12 +392,12 @@ namespace MagicCubeVishal
 
 
 
-        void OnSwipeRotate(Globals.CubeRotationDirection direction, CubePlane plane)
+        void OnSwipeRotate(Globals.CubeRotationDirection direction, CubeUnitDetectorPlane plane)
         {
-            RecordCubeRotation(plane.detectedCubes, direction);
+            RecordCubeRotation(plane.detectedCubeUnits, direction);
 
             //Grab all Horizontal Cube units
-            detectedCubes.AddRange(plane.detectedCubes);
+            detectedCubes.AddRange(plane.detectedCubeUnits);
 
             //Set Rotator as their parent
             for (int i = 0; i < detectedCubes.Count; i++)
@@ -581,9 +584,9 @@ namespace MagicCubeVishal
 
         public void ClearAllPlanesData()
         {
-            planeY.Clear();
-            planeZ.Clear();
-            planeX.Clear();
+            planeY.ClearDetectedCubeUnits();
+            planeZ.ClearDetectedCubeUnits();
+            planeX.ClearDetectedCubeUnits();
         }
 
         #endregion

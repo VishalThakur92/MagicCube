@@ -43,6 +43,17 @@ namespace MagicCubeVishal
             size5,
             size6
         }
+
+        //Possible types of Cube Unit colors in the Magic Cube
+        public enum CubeColor
+        {
+            red = 0,
+            green,
+            blue,
+            orange,
+            white,
+            yellow
+        }
         #endregion
 
 
