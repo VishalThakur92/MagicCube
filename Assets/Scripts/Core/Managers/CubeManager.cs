@@ -9,7 +9,6 @@ namespace MagicCubeVishal
         //Singelton Instance
         public static CubeManager Instance { get; private set; }
 
-
         //Selected Magic Cube's prefab is instantiated as child of this obj
         [SerializeField]
         Transform magicCubeParent, magicCubeCameraParent;
