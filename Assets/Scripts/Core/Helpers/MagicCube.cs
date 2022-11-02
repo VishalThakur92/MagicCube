@@ -4,41 +4,37 @@ using UnityEngine;
 
 namespace MagicCubeVishal
 {
+    //The Magic Cube Class
     public class MagicCube : MonoBehaviour
     {
+        #region Params
         //This Magic Cube's Type
         public Globals.CubeType cubeType;
 
+        //The Camera that is tuned to Render this Magic Cube
         public Camera respectiveCamera;
-
 
         //Is this Cube solved
         public bool isSolved = false;
 
+        //List of all Detector planes that determine if the Cube is solved
         [SerializeField]
         List<CubeSolvedDetectorPlane> cubeSolvedDetectorPlanes = new List<CubeSolvedDetectorPlane>();
 
         //All Cube units for this size of Rubik Cube
         [SerializeField]
         public List<CubeUnit> allCubeUnits = new List<CubeUnit>();
+        #endregion
 
 
-        //private void Update()
-        //{
-        //    if(Input.GetKeyUp(KeyCode.Space))
-        //        StartCoroutine(IsSolvedBehaviour());
-        //}
-        private void Start()
-        {
-            //StartCoroutine(IsSolvedBehaviour());
-            //IsSolved();
-        }
+        #region Core
 
         //Keep Rotating this magic Cube
         public void RotateCrazy() {
             StartCoroutine(RotateCrazyBehaviour());
         }
 
+        //Async Rotation of this Magic Cube, Called upon Cube Solved
         IEnumerator RotateCrazyBehaviour() {
             while (true) {
                 transform.Rotate(0, 6.0f * Globals.magicCubeCrazyRotationMultiplier * Time.deltaTime, 0);
@@ -46,6 +42,8 @@ namespace MagicCubeVishal
             }
         }
 
+
+        //Determine if this magic cube is solved with the help of detector planes
         public IEnumerator IsSolvedBehaviour()
         {
             int totalSolvedSides = 0;
@@ -103,5 +101,6 @@ namespace MagicCubeVishal
                 cubeSolvedDetectorPlanes[i].gameObject.SetActive(false);
             }
         }
+        #endregion
     }
 }

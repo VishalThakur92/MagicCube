@@ -5,6 +5,7 @@ using UnityEngine;
 
 namespace MagicCubeVishal
 {
+    //The Main Daddy Controller of This Game, Here we define what happens upon various events
     public class GameManager : MonoBehaviour
     {
         #region Parameters
@@ -170,9 +171,12 @@ namespace MagicCubeVishal
         }
 
 
+        //Opens up my LinkedIn Profile
         public void JumpToDevProfile() {
             Application.OpenURL("https://www.linkedin.com/in/vishal-thakur-56304266/");
         }
+
+        //Check if a save Game exists
         bool DoesSaveGameExist()
         {
 
@@ -194,11 +198,14 @@ namespace MagicCubeVishal
             }
         }
 
+        //TODO Works but is buggy, Needs improvement
         //private void OnApplicationQuit()
         //{
         //    SaveGame();
         //}
 
+
+        //Decide what happens when user has acknowledged the Cube solved state
         public void AcknowledgeOnCubeSolved() {
             //Reset Cube Manager
             CubeManager.Instance.Reset();
@@ -208,11 +215,13 @@ namespace MagicCubeVishal
         }
 
 
+        //Start Game timer
         public void StartGameTimer()
         {
             StartCoroutine(GameTimerBehaviour());
         }
 
+        //Start Game timer
         public void StopGameTimer()
         {
             UIManager.Instance.gameTimerText.text = null;

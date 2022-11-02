@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace MagicCubeVishal
 {
+    //Used to detect Cube Units one of the Magic Cube on an AXIS
     public class CubeUnitDetectorPlane : MonoBehaviour
     {
+
+        //Detected Cube units via OnTriggerEnter()
         [SerializeField]
         public List<CubeUnit> detectedCubeUnits = new List<CubeUnit>();
 
@@ -19,7 +22,7 @@ namespace MagicCubeVishal
         }
 
 
-
+        //Clear Cache
         public void ClearDetectedCubeUnits()
         {
             detectedCubeUnits.Clear();
