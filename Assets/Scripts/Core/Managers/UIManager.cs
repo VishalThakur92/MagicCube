@@ -18,6 +18,11 @@ namespace MagicCubeVishal
 
         [SerializeField]
         Button loadSavedGameButton;
+
+
+        //UI Menus
+        [SerializeField]
+        public GameObject gameCompleteMenu, HUDMenu;
         #endregion
 
 

@@ -37,6 +37,13 @@ namespace MagicCubeVishal
         [SerializeField]
         bool rotating = false;
 
+        //TRUE - Should Check if the cube is solved 
+        bool checkIfSolved = false;
+
+        //Did user select a cube unit on the TOP face of the Magic Cube
+        [SerializeField]
+        bool isTopFaceSelected = false;
+
 
         //Time it takes make on Magic cube's Side rotation
         [SerializeField]
@@ -52,9 +59,6 @@ namespace MagicCubeVishal
         //the half of the Current Screen's Width
         float screenhalf;
 
-        //Did user select a cube unit on the TOP face of the Magic Cube
-        [SerializeField]
-        bool isTopFaceSelected = false;
 
 
 
@@ -91,12 +95,12 @@ namespace MagicCubeVishal
             //GUILayout.Label($"Screen Width = {Screen.width / 2}", guiStyle);
             //GUILayout.Label($"Swipe Dir = {swipeDirection}", guiStyle);
 
-            //foreach (string value in rotationSteps)
-            //{
-            //    GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
-            //}
+            foreach (string value in rotationSteps)
+            {
+                GUILayout.Label($"ID : {value.Split('_')[0]} dir = {value.Split('_')[1]}", guiStyle);
+            }
 
-                //GUILayout.Label($"rotating = {rotating}", guiStyle);
+            //GUILayout.Label($"rotating = {rotating}", guiStyle);
         }
 
 
@@ -184,10 +188,36 @@ namespace MagicCubeVishal
 
 
         #region Core
+
+
         //Initialize with a specified Cube Type
+        public void Reset()
+        {
+            //Destroy Previous Magic Cube if any was loaded earlier
+            if (currentMagicCube)
+            {
+                Destroy(currentMagicCube.gameObject);
+                currentMagicCube = null;
+            }
+
+            //Destroy Previous Magic Cube's camera
+            if (currentMagicCubeCamera)
+            {
+                Destroy(currentMagicCubeCamera.gameObject);
+                currentMagicCubeCamera = null;
+            }
+
+            rotating = checkIfSolved = isTopFaceSelected = false;
+
+            rotationSteps.Clear();
+            UnSubsribeFromEvents();
+        }
+
         public void Initialize(Globals.CubeType cubeType)
         {
             UnSubsribeFromEvents();
+
+
             //Load and instantitate specified Cube prefab
             currentMagicCube = Instantiate(allMagicCubes[(int)cubeType], magicCubeParent);
 
@@ -531,7 +561,8 @@ namespace MagicCubeVishal
 
                 if (currentMagicCube.isSolved)
                 {
-                    Debug.LogError($"{currentMagicCube} is solved!!! Game Complete Screen!!");
+                    Globals.OnCubeSolved?.Invoke();
+                    //Debug.LogError($"{currentMagicCube} is solved!!! Game Complete Screen!!");
                 }
                 else//Continue Game, let user continue solve the Cube
                     rotating = false;
@@ -610,7 +641,6 @@ namespace MagicCubeVishal
         }
 
         #endregion
-        bool checkIfSolved = false;
 
         #region Callbacks
         void OnSwipe(Globals.SwipeDirection direction, bool isActualSwipe)

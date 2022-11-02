@@ -27,6 +27,7 @@ namespace MagicCubeVishal
 
         void Start()
         {
+            //PlayerPrefs.DeleteAll();
             if (!DoesSaveGameExist())
             {
                 PlayerPrefs.DeleteAll();
@@ -37,7 +38,25 @@ namespace MagicCubeVishal
 
                 UIManager.Instance.ToggleLoadGameButton(true);
             }
+
+            SubscribeEvents();
         }
+
+
+        private void OnDestroy()
+        {
+            UnSubscribeEvents();
+        }
+
+        void SubscribeEvents()
+        {
+            Globals.OnCubeSolved += OnCubeSolved;
+        }
+        void UnSubscribeEvents()
+        {
+            Globals.OnCubeSolved -= OnCubeSolved;
+        }
+
 
         //Starts the Game with the Specified Parameters
         void StartGame(Globals.CubeType type)
@@ -60,7 +79,7 @@ namespace MagicCubeVishal
         //Exit current Game and goto main menu
         public void ExitGame()
         {
-            SaveGame();
+            //SaveGame();
 
             //OnFinish behaviour for UIManager
             UIManager.Instance.OnFinish();
@@ -159,6 +178,20 @@ namespace MagicCubeVishal
             {
                 return false;
             }
+        }
+
+        //Decide what Happens when a cube is solved
+        void OnCubeSolved()
+        {
+            UIManager.Instance.HUDMenu.gameObject.SetActive(false);
+            UIManager.Instance.gameCompleteMenu.gameObject.SetActive(true);
+
+            //On Win Behaviour - Keep the Cube Spinning
+        }
+
+        public void AcknowledgeOnCubeSolved() {
+            //Reset Cube Manager
+            CubeManager.Instance.Reset();
         }
         #endregion
 

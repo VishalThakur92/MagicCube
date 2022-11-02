@@ -69,6 +69,17 @@ namespace MagicCubeVishal
 
 
         #region Events
+
+        //-----Game Events---------
+        //Invoked when a user solves the selected Magic Cube
+        public static Action OnCubeSolved;
+
+        //Invoked when a user knows he has solved the cube and he chooses to go back to the Main menu
+        public static Action OnCubeSolvedAcknowledged;
+
+
+
+        //-----Input Events---------
         //Invoked when a user does a swipe
         public static Action<SwipeDirection, bool> OnSwipe;
 
@@ -80,7 +91,6 @@ namespace MagicCubeVishal
 
         //Invoked when a user lifts the taps from the scren
         public static Action<float,float> OnPinchInOut;
-
         #endregion
     }
 }
