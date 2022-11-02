@@ -3528,8 +3528,8 @@ MonoBehaviour:
   magicCubeCameraParent: {fileID: 1686753689}
   allMagicCubes:
   - {fileID: 7670135036463826125, guid: bf3ad08bef3ca4738886f17b7f1df87c, type: 3}
-  - {fileID: 8046867366955890596, guid: ef171e2fa8d35418797a9e48f0f74e83, type: 3}
-  - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
+  - {fileID: 7670135036463826125, guid: 46879c0cde37447c39a3b977f59ee7a4, type: 3}
+  - {fileID: 7670135036463826125, guid: c898ce399728743ac9215107689a8cea, type: 3}
   - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
   - {fileID: 8186478343242508937, guid: 0c11dafe466764cd5b3e46cc7737af01, type: 3}
   rotator: {fileID: 1300167240}
