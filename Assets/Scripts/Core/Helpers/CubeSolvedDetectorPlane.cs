@@ -20,6 +20,10 @@ namespace MagicCubeVishal
                 detectedCubeFaces.Add(newCubeFace);
         }
 
+        private void OnDisable()
+        {
+            ClearDetectedCubeFaces();
+        }
 
         public void ClearDetectedCubeFaces()
         {

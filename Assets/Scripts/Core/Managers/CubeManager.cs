@@ -114,8 +114,8 @@ namespace MagicCubeVishal
                 return;
 
 
-            if (Input.GetKeyUp(KeyCode.Space))
-                Undo();
+            //if (Input.GetKeyUp(KeyCode.Space))
+            //    Undo();
 
 
 
@@ -323,7 +323,7 @@ namespace MagicCubeVishal
             
             if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.UseGlobal))
             {
-                Debug.LogError(hit.transform.name);
+                //Debug.LogError(hit.transform.name);
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
 
                 if (selectedCubeUnit != null)
@@ -524,16 +524,20 @@ namespace MagicCubeVishal
             detectedCubes.Clear();
             //Debug.LogError("Finish");
 
-            //Check if magic Cube is solved
-            yield return currentMagicCube.IsSolvedBehaviour();
-            if (currentMagicCube.isSolved)
+            if (checkIfSolved)
             {
-                Debug.LogError($"{currentMagicCube} is solved!!! Game Complete Screen!!");
-            }
-            else//Continue Game, let user continue solve the Cube
-                rotating = false;
+                //Check if magic Cube is solved
+                yield return currentMagicCube.IsSolvedBehaviour();
 
-            //rotating = false;
+                if (currentMagicCube.isSolved)
+                {
+                    Debug.LogError($"{currentMagicCube} is solved!!! Game Complete Screen!!");
+                }
+                else//Continue Game, let user continue solve the Cube
+                    rotating = false;
+            }
+            else
+                rotating = false;
         }
 
 
@@ -606,6 +610,7 @@ namespace MagicCubeVishal
         }
 
         #endregion
+        bool checkIfSolved = false;
 
         #region Callbacks
         void OnSwipe(Globals.SwipeDirection direction, bool isActualSwipe)
@@ -726,6 +731,8 @@ namespace MagicCubeVishal
                     OnSwipeRotate(Globals.CubeRotationDirection.downLeft, planeZ);
                     break;
             }
+
+            checkIfSolved = isActualSwipe;
         }
 
 
