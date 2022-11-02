@@ -70,7 +70,7 @@ namespace MagicCubeVishal
 
 
         //------Camera Related Params
-        public static float MinZoomBound = .6f, MaxZoomBound =1.65f;
+        public static float MinZoomBound = .6f, MaxZoomBound =1.90f;
 
 
 

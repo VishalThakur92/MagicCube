@@ -12,7 +12,7 @@ namespace MagicCubeVishal {
         {
             cam = GetComponent<Camera>();
             Initialize();
-            guiStyle.fontSize = 60;
+            guiStyle.fontSize = 40;
         }
 
         public void Initialize() {
