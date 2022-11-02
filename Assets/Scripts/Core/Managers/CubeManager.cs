@@ -354,7 +354,7 @@ namespace MagicCubeVishal
             
             if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.UseGlobal))
             {
-                Debug.LogError(hit.transform.name);
+                //Debug.LogError(hit.transform.name);
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
 
                 if (selectedCubeUnit != null)
