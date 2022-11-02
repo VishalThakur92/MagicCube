@@ -387,7 +387,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7448345b93c545d88f5f6bb7a20a475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectedCubes: []
+  detectedCubeUnits: []
 --- !u!54 &187218446
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1631,7 +1631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7448345b93c545d88f5f6bb7a20a475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectedCubes: []
+  detectedCubeUnits: []
 --- !u!65 &680972455
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -3544,7 +3544,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7448345b93c545d88f5f6bb7a20a475, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  detectedCubes: []
+  detectedCubeUnits: []
 --- !u!65 &1381136667
 BoxCollider:
   m_ObjectHideFlags: 0

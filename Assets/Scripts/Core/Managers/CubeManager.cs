@@ -19,7 +19,11 @@ namespace MagicCubeVishal
 
 
 
+        //[SerializeField]
+        LayerMask cubeUnitRayLayerMask = 1 << 6;//Raycast on Cube Unit only
 
+
+        LayerMask ignoreLayersTopFaceDetection = 1 << 3;//Raycast Top Face Detector Plane only
 
         [Space(10)]
         [SerializeField]
@@ -312,17 +316,21 @@ namespace MagicCubeVishal
 
         IEnumerator GrabSelectedCubeUnit()
         {
+            //Cache mouse position X while a potential cube unit is selected
             mousePositionXOnInput = Input.mousePosition.x;
-            Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity))
+            Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(new Vector3(Input.mousePosition.x , Input.mousePosition.y , currentMagicCube.respectiveCamera.nearClipPlane));
+
+            
+            if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.UseGlobal))
             {
+                Debug.LogError(hit.transform.name);
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
 
                 if (selectedCubeUnit != null)
                 {
 
                     detectedCubes.Clear();
-                    Debug.LogError(hit.transform.name);
+                    //Debug.LogError(hit.transform.name);
                     detectorPlanesParent.position = selectedCubeUnit.transform.position;
                     ClearAllPlanesData();
                     yield return null;
@@ -331,24 +339,22 @@ namespace MagicCubeVishal
 
                     DebugRaydirection = hit.normal;
 
-                    LayerMask ignoreLayers = 1 << 3;
-
                     yield return new WaitForEndOfFrame();
 
                     //Check if the selected Cube is in the TOP face of the MAGIC Cube
-                    if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, Mathf.Infinity, ignoreLayers))
+                    if (selectedCubeUnit && Physics.Raycast(selectedCubeUnit.transform.position, hit.normal, out RaycastHit hit2, ~ignoreLayersTopFaceDetection))
                     {
-                        Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
+                        //Debug.LogError($"name = {hit2.transform.name} layer = {hit2.transform.gameObject.layer}");
                         if (hit2.transform.gameObject.layer == 3)
                         {
                             isTopFaceSelected = true;
-                            Debug.LogError("Top Face Seleced " + hit2.transform.name);
+                            //Debug.LogError("Top Face Seleced " + hit2.transform.name);
                         }
                     }
                     else
                     {
                         isTopFaceSelected = false;
-                        Debug.LogError("Nothing");
+                        //Debug.LogError("Nothing");
                     }
                 }
 
@@ -517,7 +523,17 @@ namespace MagicCubeVishal
 
             detectedCubes.Clear();
             //Debug.LogError("Finish");
-            rotating = false;
+
+            //Check if magic Cube is solved
+            yield return currentMagicCube.IsSolvedBehaviour();
+            if (currentMagicCube.isSolved)
+            {
+                Debug.LogError($"{currentMagicCube} is solved!!! Game Complete Screen!!");
+            }
+            else//Continue Game, let user continue solve the Cube
+                rotating = false;
+
+            //rotating = false;
         }
 
 
@@ -541,13 +557,13 @@ namespace MagicCubeVishal
             //Iron out any missed values
             rotator.rotation = targetRotation;
             yield return new WaitForEndOfFrame();
+
             //put Current magic Cube back to magicCubeParent
             currentMagicCube.transform.SetParent(magicCubeParent, true);
 
             //Iron out any missed values
             rotator.rotation = Quaternion.Euler(0, 0, 0);
 
-            yield return new WaitForEndOfFrame();
             rotating = false;
         }
 
@@ -594,8 +610,8 @@ namespace MagicCubeVishal
         #region Callbacks
         void OnSwipe(Globals.SwipeDirection direction, bool isActualSwipe)
         {
-            if(isActualSwipe)
-                Debug.LogError($"OnSwipe {direction}");
+            //if(isActualSwipe)
+                //Debug.LogError($"OnSwipe {direction}");
             //swipeDirection = direction;
             //avoid multiple inputs
             if (rotating)

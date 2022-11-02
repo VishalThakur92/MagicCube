@@ -22,29 +22,40 @@ namespace MagicCubeVishal
         [SerializeField]
         public List<CubeUnit> allCubeUnits = new List<CubeUnit>();
 
+
+        private void Update()
+        {
+            if(Input.GetKeyUp(KeyCode.Space))
+                StartCoroutine(IsSolvedBehaviour());
+        }
         private void Start()
         {
-            StartCoroutine(IsSolvedBehaviour());
+            //StartCoroutine(IsSolvedBehaviour());
             //IsSolved();
         }
 
 
-        IEnumerator IsSolvedBehaviour()
+        public IEnumerator IsSolvedBehaviour()
         {
             int totalSolvedSides = 0;
             int i, j;
             //Enable Detector for all 6 sides
             for (i = 0; i < 6; i++)
             {
+                //Enable the Detector plane
                 cubeSolvedDetectorPlanes[i].gameObject.SetActive(true);
 
-                yield return new WaitForEndOfFrame();
+                //Wait for one frame, now the Detector plane will grab all the cubes
+                yield return new WaitForSeconds(.1f);
 
+                //Grab color of first grabbed cube
                 Globals.CubeColor initialColor = cubeSolvedDetectorPlanes[i].detectedCubeFaces[0].color;
 
+                //Compare it against the rest of others
+                //If this side is solved then all cube faces should have the same color
                 for (j = 0; j < 4; j++)
                 {
-                    //Is not solved
+                    //A cube face did not have the same color, hence we consider this side is not solved and moreover the magic cube itself is not solved
                     if (cubeSolvedDetectorPlanes[i].detectedCubeFaces[j].color != initialColor)
                     {
                         isSolved = false;
@@ -52,7 +63,7 @@ namespace MagicCubeVishal
                     }
                 }
 
-                //Has checked on side Now move on to next side
+                //Total 6 sides, Mark one more side as being solved
                 totalSolvedSides++;
             }
 
@@ -62,47 +73,14 @@ namespace MagicCubeVishal
             else
                 isSolved = false;
 
+
+            //Disable All Detector Faces, so that we can re-detect upon re-enabling the detector planes
             for (i = 0; i < 6; i++)
             {
-                cubeSolvedDetectorPlanes[i].gameObject.SetActive(false);
                 cubeSolvedDetectorPlanes[i].ClearDetectedCubeFaces();
-                yield return null;
+                cubeSolvedDetectorPlanes[i].gameObject.SetActive(false);
+                //yield return null;
             }
-        }
-
-        void IsSolved()
-        {
-            int totalSolvedSides = 0;
-            int i, j;
-            //Enable Detector for all 6 sides
-            for (i = 0; i < 6; i++)
-            {
-                cubeSolvedDetectorPlanes[i].gameObject.SetActive(true);
-                //yield return new WaitForEndOfFrame();
-
-                //yield return new WaitForEndOfFrame();
-
-                Globals.CubeColor initialColor = cubeSolvedDetectorPlanes[i].detectedCubeFaces[0].color;
-
-                for (j = 0; j < 4; j++)
-                {
-                    //Is not solved
-                    if (cubeSolvedDetectorPlanes[i].detectedCubeFaces[j].color != initialColor)
-                    {
-                        isSolved = false;
-                        //yield break;
-                    }
-                }
-
-                //Has checked on side Now move on to next side
-                totalSolvedSides++;
-            }
-
-            //Check if all 6 sides are solved
-            if (totalSolvedSides == 6)
-                isSolved = true;
-            else
-                isSolved = false;
         }
     }
 }
