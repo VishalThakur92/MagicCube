@@ -167,6 +167,10 @@ namespace MagicCubeVishal
             //Start A new Game and apply rotations to the respective cube
         }
 
+
+        public void JumpToDevProfile() {
+            Application.OpenURL("https://www.linkedin.com/in/vishal-thakur-56304266/");
+        }
         bool DoesSaveGameExist()
         {
 

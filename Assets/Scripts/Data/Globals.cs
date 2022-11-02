@@ -61,8 +61,8 @@ namespace MagicCubeVishal
 
         //------CubeManager params
         //Minimum and Maximum Shuffle Steps can be used to Lower/Increase the Game Difficulty
-        public static int MinimumShuffleSteps = 1;
-        public static int MaximumShuffleSteps = 2;
+        public static int MinimumShuffleSteps = 10;
+        public static int MaximumShuffleSteps = 30;
         public static float secondsToWaitBeforeShuffle = .5f;
         public static int magicCubeCrazyRotationMultiplier = 20;
 
