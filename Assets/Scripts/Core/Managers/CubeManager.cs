@@ -208,7 +208,7 @@ namespace MagicCubeVishal
             }
 
             rotating = checkIfSolved = isTopFaceSelected = false;
-
+            detectedCubes.Clear();
             rotationSteps.Clear();
             UnSubsribeFromEvents();
         }

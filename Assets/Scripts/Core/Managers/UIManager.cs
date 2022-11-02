@@ -22,7 +22,7 @@ namespace MagicCubeVishal
 
         //UI Menus
         [SerializeField]
-        public GameObject gameCompleteMenu, HUDMenu;
+        public GameObject gameCompleteMenu, HUDMenu, undoButton;
 
 
         //Game TIMER Text

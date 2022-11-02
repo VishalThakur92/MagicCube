@@ -95,6 +95,8 @@ namespace MagicCubeVishal
             //OnFinish behaviour for CubeManager
             CubeManager.Instance.OnFinish();
 
+            StopGameTimer();
+
             if (!DoesSaveGameExist())
             {
                 PlayerPrefs.DeleteAll();
@@ -197,7 +199,7 @@ namespace MagicCubeVishal
             CubeManager.Instance.Reset();
 
             //Reset Timer Text
-            UIManager.Instance.gameTimerText.text = "00:00";
+            UIManager.Instance.gameTimerText.text = null;
         }
 
 
@@ -208,6 +210,7 @@ namespace MagicCubeVishal
 
         public void StopGameTimer()
         {
+            UIManager.Instance.gameTimerText.text = null;
             StopAllCoroutines();
             //StopCoroutine(GameTimerBehaviour());
         }
@@ -242,6 +245,7 @@ namespace MagicCubeVishal
         {
             UIManager.Instance.HUDMenu.gameObject.SetActive(false);
             UIManager.Instance.gameCompleteMenu.gameObject.SetActive(true);
+            UIManager.Instance.undoButton.gameObject.SetActive(false);
 
             //Cube solved Stop the Game timer
             StopGameTimer();
@@ -260,6 +264,17 @@ namespace MagicCubeVishal
         void OnCubeShuffleComplete() {
             //Start Game Timer
             StartGameTimer();
+
+            UIManager.Instance.undoButton.gameObject.SetActive(true);
+        }
+
+
+        public void OnShowGameTimerToggled(bool flag) {
+            //hide or show Game timer based on the specified flag
+            UIManager.Instance.gameTimerText.gameObject.SetActive(flag);
+
+            if (flag == false)
+                UIManager.Instance.gameTimerText.text = null;
         }
         #endregion
 
