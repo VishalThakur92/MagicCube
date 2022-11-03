@@ -348,10 +348,10 @@ namespace MagicCubeVishal
         {
             //Cache mouse position X while a potential cube unit is selected
             mousePositionXOnInput = Input.mousePosition.x;
-            Ray ray = currentMagicCube.respectiveCamera.ScreenPointToRay(new Vector3(Input.mousePosition.x , Input.mousePosition.y , currentMagicCube.respectiveCamera.nearClipPlane));
+            Ray ray = currentMagicCubeCamera.ScreenPointToRay(new Vector3(Input.mousePosition.x , Input.mousePosition.y , currentMagicCube.respectiveCamera.nearClipPlane));
 
             
-            if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.UseGlobal))
+            if (Physics.Raycast(ray, out RaycastHit hit,Mathf.Infinity, cubeUnitRayLayerMask, QueryTriggerInteraction.Collide))
             {
                 //Debug.LogError(hit.transform.name);
                 selectedCubeUnit = hit.transform.GetComponent<CubeUnit>();
