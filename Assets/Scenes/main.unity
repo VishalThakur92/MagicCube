@@ -1574,8 +1574,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1614800730}
-        m_TargetAssemblyTypeName: GameManager, Core
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: MagicCubeVishal.GameManager, Core
+        m_MethodName: StartNewGame
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3862,8 +3862,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1614800730}
-        m_TargetAssemblyTypeName: GameManager, Core
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: MagicCubeVishal.GameManager, Core
+        m_MethodName: StartNewGame
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4963,8 +4963,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1614800730}
-        m_TargetAssemblyTypeName: GameManager, Core
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: MagicCubeVishal.GameManager, Core
+        m_MethodName: StartNewGame
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5453,8 +5453,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1614800730}
-        m_TargetAssemblyTypeName: GameManager, Core
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: MagicCubeVishal.GameManager, Core
+        m_MethodName: StartNewGame
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6427,8 +6427,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1614800730}
-        m_TargetAssemblyTypeName: GameManager, Core
-        m_MethodName: StartGame
+        m_TargetAssemblyTypeName: MagicCubeVishal.GameManager, Core
+        m_MethodName: StartNewGame
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
