@@ -16,8 +16,6 @@ namespace MagicCubeVishal
         [SerializeField]
         List<MagicCube> allMagicCubes = new List<MagicCube>();
 
-
-
         //[SerializeField]
         LayerMask cubeUnitRayLayerMask = 1 << 6;//Raycast on Cube Unit only
 
@@ -59,6 +57,10 @@ namespace MagicCubeVishal
         float screenhalf;
 
 
+        //total number of shuffle steps
+        //While doing an Undo the shuffle steps wont be cleared or undone
+        //This helps saving the shuffle steps aswell
+        int totalShuffleSteps = 0;
 
 
         //Detector planes are used to Grab all corressponding cubes in the specified Input Direction
@@ -74,8 +76,17 @@ namespace MagicCubeVishal
         CubeUnit selectedCubeUnit;
         //The Steps being Recorded with every Cube move
 
+
+        //Used for Undo Functionality
         [SerializeField]
         public List<string> rotationSteps = new List<string>();
+
+
+        //Used for Save Game Data Functionality
+        [SerializeField]
+        //public List<string> SaveGamerotationSteps = new List<string>();
+
+
         //The Currently selected Magic Cube
         public MagicCube currentMagicCube;
 
@@ -209,13 +220,13 @@ namespace MagicCubeVishal
             rotating = checkIfSolved = isTopFaceSelected = false;
             detectedCubes.Clear();
             rotationSteps.Clear();
+            //SaveGamerotationSteps.Clear();
             UnSubsribeFromEvents();
         }
 
-        public void Initialize(Globals.CubeType cubeType)
+        public void Initialize(Globals.CubeType cubeType, bool loadfromSavedData)
         {
-            UnSubsribeFromEvents();
-
+            //Reset();
 
             //Load and instantitate specified Cube prefab
             currentMagicCube = Instantiate(allMagicCubes[(int)cubeType], magicCubeParent);
@@ -223,12 +234,12 @@ namespace MagicCubeVishal
             //Load and instantitate specified Cube's Camera
             currentMagicCubeCamera = Instantiate(allMagicCubes[(int)cubeType].respectiveCamera, magicCubeCameraParent);
 
-            //Apply rotations if alrady there, this is used when we Load a saved game
-            if (rotationSteps.Count > 0)
+            //Apply rotations if the user loaded a saved game
+            if (loadfromSavedData)
             {
                 ApplyAllRotationSteps();
             }
-            else//Fresh new Game
+            else//Start a fresh new Game
             {
                 Shuffle();
             }
@@ -264,12 +275,12 @@ namespace MagicCubeVishal
             yield return new WaitForSeconds(Globals.secondsToWaitBeforeShuffle);
 
             //total number of shuffle steps - RANOM
-            int shuffleSteps = Random.Range(Globals.MinimumShuffleSteps , Globals.MaximumShuffleSteps);
+            totalShuffleSteps = Random.Range(Globals.MinimumShuffleSteps , Globals.MaximumShuffleSteps);
             //Debug.LogError($"Will Rotate for {shuffleSteps} steps");
             //CubeUnit randomCubeUnit;
             Globals.SwipeDirection randomSwipe;
             //Shuffle the magic Cube x times where, x = shuffleSteps
-            for (int i = 0; i < shuffleSteps; i++) {
+            for (int i = 0; i < totalShuffleSteps; i++) {
                 //rotating = true;
                 //Select a random cube unit
                 selectedCubeUnit = currentMagicCube.allCubeUnits[Random.Range(0, currentMagicCube.allCubeUnits.Count)];
@@ -299,7 +310,7 @@ namespace MagicCubeVishal
             }
 
             //Clear Rotation Steps as we dont want the user to keep pressing UNDO and setting the Cube to Solved state
-            rotationSteps.Clear();
+            //rotationSteps.Clear();
 
 
             //Shuffle Complete, Now we want the user to be able to give inputs to rotate the Cube
@@ -398,7 +409,7 @@ namespace MagicCubeVishal
 
         public void Undo()
         {
-            if (rotating || rotationSteps.Count == 0)
+            if (rotating || rotationSteps.Count == 0 || rotationSteps.Count <= totalShuffleSteps)
                 return;
 
 
@@ -624,6 +635,7 @@ namespace MagicCubeVishal
             //Debug.LogError("Record Entry = " + value);
 
             rotationSteps.Add(value);
+            //SaveGamerotationSteps.Add(value);
         }
 
         public void ToggleAllPlanes(bool flag)

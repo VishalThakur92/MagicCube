@@ -15,6 +15,8 @@ namespace MagicCubeVishal
         //Seconds taken to solve a Magic Cube in a respective session
         float secondsTaken = 0;
         string gameTimeFormatted;
+
+        //bool loadSavedData = false;
         #endregion
 
 
@@ -68,10 +70,10 @@ namespace MagicCubeVishal
 
 
         //Starts the Game with the Specified Parameters
-        void StartGame(Globals.CubeType type)
+        void StartGame(Globals.CubeType type, bool loadSavedData)
         {
             //set the specified Cube type
-            CubeManager.Instance.Initialize(type);
+            CubeManager.Instance.Initialize(type, loadSavedData);
 
             //Set Canvas Camera as per the selected respective cube
             UIManager.Instance.SetCanvasCamera(CubeManager.Instance.currentMagicCubeCamera);
@@ -80,15 +82,16 @@ namespace MagicCubeVishal
 
 
         //Start the game with the Specified Cube type
-        public void StartGame(int cubeType)
+        public void StartNewGame(int cubeType)
         {
-            StartGame((Globals.CubeType)cubeType);
+            StartGame((Globals.CubeType)cubeType, false);
         }
+
 
         //Exit current Game and goto main menu
         public void ExitGame()
         {
-            //SaveGame();
+            SaveGame();
 
             //OnFinish behaviour for UIManager
             UIManager.Instance.OnFinish();
@@ -108,7 +111,6 @@ namespace MagicCubeVishal
 
                 UIManager.Instance.ToggleLoadGameButton(true);
             }
-
         }
 
         //Save game
@@ -147,11 +149,12 @@ namespace MagicCubeVishal
             int cubeType = PlayerPrefs.GetInt("cubeType");
             int dataCount = PlayerPrefs.GetInt("dataCount");
 
+            //Corrupt Data Start Fresh new Game
             if (dataCount == 0)
             {
-                Debug.LogError("No steps Found");
+                Debug.LogError("Saved Game Data Corrupt, Starting a new Game");
                 PlayerPrefs.DeleteAll();
-                StartGame(Globals.CubeType.size3);
+                StartGame(Globals.CubeType.size3,false);
                 return;
             }
 
@@ -165,7 +168,8 @@ namespace MagicCubeVishal
                 CubeManager.Instance.rotationSteps.Add(newValue);
             }
 
-            StartGame((Globals.CubeType)cubeType);
+            //All saved data loaded successfully, Start game from the loaded data
+            StartGame((Globals.CubeType)cubeType,true);
 
             //Start A new Game and apply rotations to the respective cube
         }
@@ -198,18 +202,23 @@ namespace MagicCubeVishal
             }
         }
 
-        //TODO Works but is buggy, Needs improvement
-        //private void OnApplicationQuit()
-        //{
-        //    SaveGame();
-        //}
+
+        private void OnApplicationQuit()
+        {
+            SaveGame();
+        }
 
 
         //Decide what happens when user has acknowledged the Cube solved state
         public void AcknowledgeOnCubeSolved() {
-            //Reset Cube Manager
+            ////Reset Cube Manager
             CubeManager.Instance.Reset();
 
+            //Delete saved games if any, as the current cube has been sovled
+            PlayerPrefs.DeleteAll();
+
+
+            UIManager.Instance.ToggleLoadGameButton(false);
             //Reset Timer Text
             UIManager.Instance.gameTimerText.text = null;
         }
